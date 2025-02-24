@@ -98,6 +98,16 @@ canvas {
     width: 60vw;
 }
 
+@media (max-width: 600px) {
+    .content-container {
+        margin: 40px;
+        width: 80vw !important;
+        max-width: none !important;
+        min-width: 80vw !important;
+        box-sizing: border-box !important;
+    }
+}
+
 .profile-img {
     width: 15vw;
     border-radius: 50%;
