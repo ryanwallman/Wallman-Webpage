@@ -7,11 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     navItems.forEach((item) => item.classList.remove("active"));
-                    document.querySelector(`.nav-item[href="#${entry.target.id}"]`).classList.add("active");
+                    const activeNav = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+                    if (activeNav) activeNav.classList.add("active");
                 }
             });
         },
-        { threshold: 0.5 }
+        { threshold: 0.6 } // Adjusted threshold for better accuracy
     );
 
     sections.forEach((section) => observer.observe(section));
