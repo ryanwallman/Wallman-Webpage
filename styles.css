@@ -53,14 +53,14 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     color: black;
-    max-width: 600px;
+    width: 60vw;
 }
 
 .profile-img {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
-    border: 4px solid #0d76bd;
+    border: 5px solid #0d76bd;
     margin-bottom: 20px;
 }
 
