@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("load", function () {
     const skillIcons = document.querySelectorAll(".skills-grid img");
     const timelineItems = document.querySelectorAll(".timeline-item");
 
@@ -6,17 +6,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    // Get the element's position relative to viewport
                     let elementIndex = [...elements].indexOf(entry.target);
                     
                     setTimeout(() => {
                         entry.target.classList.add("show");
-                    }, elementIndex * delay); // Stagger effect for each item
+                    }, elementIndex * delay);
 
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.1 });
 
         elements.forEach(el => observer.observe(el));
     }

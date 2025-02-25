@@ -149,6 +149,7 @@ canvas {
     margin: 50px auto;
     padding: 20px;
     max-width: 800px;
+    padding-bottom: 120px;
 }
 
 .timeline::before {
@@ -169,6 +170,7 @@ canvas {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    margin-bottom: -150px;
 }
 
 .timeline-item.show {
@@ -178,18 +180,18 @@ canvas {
 
 .timeline-item:nth-child(odd) {
     left: 0;
-    text-align: right;
+    text-align: left;
 }
 
 .timeline-item:nth-child(even) {
     left: 50%;
+    text-align: left;
 }
 
 .timeline-content {
     background: white;
     color: black;
     padding: 15px;
-    border-radius: 2vw;
     border: 0.2vw solid #0d76bd;
     position: relative;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -245,6 +247,11 @@ canvas {
 }
 
 @media (max-width: 600px) {
+
+    .timeline{
+        padding-bottom: 0;
+    }
+
     .timeline::before {
         left: 20px; /* Keeps the timeline line on the left */
     }
@@ -255,6 +262,7 @@ canvas {
         text-align: left;
         position: relative;
         left: 0 !important; /* Forces all items to align left */
+        margin-bottom: 0px;
     }
 
     .timeline-item .timeline-content {
