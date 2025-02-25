@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
             this.radius = Math.random() * 2 + 1;
-            this.dx = Math.random() * 0.5 - 0.25;
-            this.dy = Math.random() * 0.5 - 0.25;
+            this.dx = Math.random() * 1 - 0.25;
+            this.dy = Math.random() * 1 - 0.25;
         }
 
         draw() {
