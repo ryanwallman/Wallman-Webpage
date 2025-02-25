@@ -289,11 +289,24 @@ canvas {
     }
 
     .timeline-content {
-        padding: 10px;
+        padding: 20px;
         font-size: 12px; /* Smaller text */
     }
 }
 
+.company-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Space between text and logo */
+    text-decoration: none;
+    color: inherit; /* Keeps text color same as the parent */
+}
+
+.company-logo {
+    width: 4vw; /* Adjust size as needed */
+    height: auto;
+    display: inline-block;
+}
 
 /* SKILLS */
 .skills-grid {
