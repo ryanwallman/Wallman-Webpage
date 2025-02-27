@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("resize", resizeCanvas);
 
     const stars = [];
-    const maxStars = 100;
+    const maxStars = 250;
     const mouse = { x: null, y: null, radius: 150 };
 
     class Star {
