@@ -10,188 +10,45 @@
 <body>
     <canvas id="constellationCanvas"></canvas>
 
-    <nav class="navbar">
-        <ul class="nav-list">
-            <li><a href="#about" class="nav-item active">About Me</a></li>
-            <li><a href="#experience" class="nav-item">Experience</a></li>
-            <li><a href="#projects" class="nav-item">Projects</a></li>
-            <li><a href="#skills" class="nav-item">Skills</a></li>
-            <li><a href="#contact" class="nav-item">Contact</a></li>
-        </ul>
-    </nav>
+    <div class="table-container">
+        <table>
+            <tr>
+                <td class="bg-cell1"></td>
+                <td class="bg-cell2"></td>
+                <td class="bg-cell3"></td>
+                <td class="bg-cell4"></td>
+            </tr>
+            <tr>
+                <th>
+                    About Me
+                    <p>
+                        I'm a senior computer science student at the University of Maryland. I am a full stack developer with interest and experience in numerous technologies
+                    </p>
+                </th>
+                <th>
+                    Experience
+                    <p>
+                        I've gained diverse professional experience, from working with the University of Maryland Football Team to contributing at MarketAxess, a publicly traded FinTech company modernizing the fixed-income market
+                    </p>
+                </th>
+                <th>
+                    Projects
+                    <p>
+                        In and out of school I have had the opportunity to apply my technical and analytical skills across a variety of projects
+                    </p>
+                </th>
+                <th>
+                    Skills
+                    <p>
+                        Through my experiences, I have developed a strong skill set that prepares me for future opportunities
+                    </p>
+                </th>
+            </tr>
 
-    <section id="about" class="section">
-        <div class="content-container">
-            <img src="headshot.jpg" alt="Ryan Wallman" class="profile-img">
-            <h1 class="title">Ryan Wallman</h1>
-            <p class="description">
-                Hello! I'm a senior computer science student at the University of Maryland. I am a full stack developer with interest and experience in numerous technologies.
-            </p>
-            <a href="Wallman__Ryan___resume.pdf" class="resume-button" download>Download My Resume</a>
-        </div>
-    </section>
 
-
+        </table>
+    </div>
     
-    <section id="experience" class="section">
-        <div class="content-container">
-            <h1 class="title">Experience</h1>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-icon"><i class="fas fa-lightbulb"></i></div>
-                    <div class="timeline-content">
-                        <h2>Software Engineering Intern</h2>
-                        <h3>
-                            <a href="https://www.marketaxess.com/" target="_blank" class="company-link">
-                                MarketAxess
-                                <img src="../images/marketaxess.png" 
-                                     alt="MarketAxess Logo" class="company-logo">
-                            </a>
-                        </h3>
-                        <p>• Implemented RESTful API endpoints to fetch/send data through a topic/parameter-specific RPC using Sonic</p>
-                        <p>• Integrated SQL stored procedures to join, retrieve, and display essential information using AG-Grid</p>
-                        <p>• Collaborated with cross-functional teams to deliver product proposals capable of generating $20M+ in revenue</p>
-                        <span class="timeline-date">June 2024 - August 2024<br>New York, NY</span>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-icon"><i class="fas fa-file-alt"></i></div>
-                    <div class="timeline-content">
-                        <h2>Coaches Video Intern</h2>
-                        <h3>
-                            <a href="https://umterps.com/" target="_blank" class="company-link">
-                                Maryland Athletics
-                                <img src="../images/umd.png" 
-                                     alt="Maryland Athletics Logo" class="company-logo">
-                            </a>
-                        </h3>
-                        <p>• Operated equipment to produce film for coaches and players to review in preparation for practices and games</p>
-                        <p>• Assisted coaches and staff with various technological and administrative tasks</p>
-                        <span class="timeline-date">January 2023 - June 2024<br>College Park, MD</span>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-icon"><i class="fas fa-globe"></i></div>
-                    <div class="timeline-content">
-                        <h2>Data Engineering Intern</h2>
-                        <h3>
-                            <a href="https://cyber20.com/" target="_blank" class="company-link">
-                                Cyber 2.0
-                                <img src="../images/cyber20.png" 
-                                     alt="Cyber 2.0 Logo" class="company-logo">
-                            </a>
-                        </h3>
-                        <p>• Developed an application to compress specific data fields from SQL tables at varying intervals using threads in Python</p>
-                        <p>• Built a script to merge a conditional number of databases, avoiding duplicates, using C# and SQL</p>
-                        <p>• Enhanced prompt engineering skills by engaging in a range of assigned tasks</p>
-                        <span class="timeline-date">June 2023 - August 2023<br>Tel Aviv, IL</span>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-icon"><i class="fas fa-globe"></i></div>
-                    <div class="timeline-content">
-                        <h2>Computer Technician Intern</h2>
-                        <h3>
-                            <a href="https://www.timefortitan.com/" target="_blank" class="company-link">
-                                Titan Technologies
-                                <img src="../images/titantech.png" 
-                                     alt="Titan Technologies Logo" class="company-logo">
-                            </a>
-                        </h3>
-                        <p>• Assisted clients with software and hardware requests using RMM software and KVM switches respectively</p>
-                        <p>• Initiated the switch to an updated server system for a client by upgrading hardware and eliminating unnecessary data</p>
-                        <p>• Communicated with Senior Technicians to execute assigned tasks to the highest degree</p>
-                        <span class="timeline-date">January 2023<br>Freehold, NJ</span>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-icon"><i class="fas fa-globe"></i></div>
-                    <div class="timeline-content">
-                        <h2>Peer Mentor</h2>
-                        <h3>
-                            <a href="https://carillon.umd.edu/" target="_blank" class="company-link">
-                                Carillon Communities
-                                <img src="../images/carillon.png" 
-                                     alt="Carillon Communities Logo" class="company-logo">
-                            </a>
-                        </h3>
-                        <p>• Encouraged students to apply modes of design thinking when solving problems in and out of class</p>
-                        <p>• Introduced a welcoming environment for first-year students to transition into the University of Maryland smoothly</p>
-                        <span class="timeline-date">August 2022 - December 2022<br>College Park, MD</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-
-    <section id="projects" class="section">
-        <div class="content-container">
-            <h1 class="title">Projects</h1>
-        </div>
-    </section>
-
-    <section id="skills" class="section">
-        <div class="content-container">
-            <h1 class="title">Skills</h1>
-            <div class="skills-grid">
-                <a href="https://www.java.com/" target="_blank">
-                    <img src="images/java.png" alt="Java"> 
-                </a>
-                <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-                    <img src="images/javascript.png" alt="JavaScript">
-                </a>
-                <a href="https://react.dev/" target="_blank">
-                    <img src="images/react.png" alt="React">
-                </a>
-                <a href="https://www.python.org/" target="_blank">
-                    <img src="images/python.png" alt="Python">
-                </a>
-                <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">
-                    <img src="images/html5.png" alt="HTML5">
-                </a>
-                <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">
-                    <img src="images/css3.png" alt="CSS3">
-                </a>
-                <a href="https://learn.microsoft.com/en-us/dotnet/csharp/" target="_blank">
-                    <img src="images/c_sharp.png" alt="C#">
-                </a>
-                <a href="https://en.cppreference.com/w/c/language" target="_blank">
-                    <img src="images/c.png" alt="C">
-                </a>
-                <a href="https://www.w3schools.com/sql/" target="_blank">
-                    <img src="images/sql.png" alt="SQL">
-                </a>
-                <a href="https://workspace.google.com/" target="_blank">
-                    <img src="images/google_workspace.png" alt="Google Workspace">
-                </a>
-                <a href="https://www.microsoft.com/en-us/microsoft-365" target="_blank">
-                    <img src="images/office365.png" alt="Microsoft Office 365">
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="section">
-        <div class="content-container">
-            <h1 class="title">Contact Me</h1>
-            <form id="contact-form" action="https://formspree.io/f/xrbewlgl" method="POST">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-    
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-    
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-    
-                <button type="submit">Send Message</button>
-            </form>
-        </div>
-    </section>
-    
-    <script src="../scripts/scrollTracker.js"></script>
-    <script src="../scripts/constellations.js"></script>
-    <script src="../scripts/scrollEffects.js"></script>
+    <script src="scripts/constellations.js"></script>
 </body>
 </html>
