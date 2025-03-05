@@ -31,6 +31,8 @@ table {
     border-spacing: 0.8vw 0px; /* Adjust the gap size */
     color: white;
     table-layout: fixed;
+    z-index: 1000;
+    
 }
 
 
@@ -59,33 +61,65 @@ tr:nth-child(2) td {
     border-top: none;
 }
 
+.table-container:hover ~ canvas {
+    pointer-events: none;
+}
+
+
 .bg-cell1 {
     background-color: rgb(49, 54, 54);
-    background-image: url("images/me.png");
+    background-image: url("images/headshot.jpg");
     background-position: center;
     background-size: cover; 
     height: 30vh; 
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
 .bg-cell2 {
-    background-image: url("images/exp.png");
+    background-image: url("images/colors.jpg");
     background-position: center;
     background-size: cover; 
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
 .bg-cell3 {
     background-image: url("images/code.jpg");
+    background-position: center;
     background-size: cover; 
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
 .bg-cell4 {
-    background-image: url("images/skills.png");
+    background-image: url("images/abstract.jpg");
     background-position: center;
     background-size: cover;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
 p {
     font-size: 0.8vw;
 }
 
+th {
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
 
+td {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+    table {
+        width: 80%;
+    }
+
+    .bg-cell1, .bg-cell2, .bg-cell3, .bg-cell4 {
+        height: 20vh; 
+    }
+}

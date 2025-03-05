@@ -1,0 +1,185 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Body */
+body {
+    background-color: #fff;
+    color: #333;
+    line-height: 1.6;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Back Button Styles */
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 2rem; /* Adjust size as needed */
+    color: #0077b6; /* Color of the arrow */
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.back-button:hover {
+    color: #005f85; /* Darken the color on hover */
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, rgb(46, 210, 180), #1e58ce);
+    color: white;
+    padding: 75px 20px;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    font-weight: 300;
+}
+
+/* Section Styling */
+.section {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.left {
+    flex: 1;
+    padding: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.resume-button {
+    margin-top: 25px;
+    display: inline-block;
+    padding: 12px 20px;
+    background: #0d76bd;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 6px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.resume-button:hover {
+    background: #095283;
+    transform: scale(1.05);
+}
+
+.right {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right img {
+    max-width: 20vw;
+    border-radius: 50%;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Passion Section */
+.passion p {
+    font-size: 1.2rem;
+    font-weight: 300;
+    margin-top: 20px;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+footer a {
+    color: #ff6f61;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: rgb(255, 126, 178);
+}
+/* Media Queries for Mobile Devices */
+@media screen and (max-width: 600px) {
+    .hero {
+        padding: 50px 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;  /* Adjusted for smaller screen */
+        letter-spacing: 2px;
+    }
+
+    .hero-content p {
+        font-size: 1rem;  /* Adjusted font size for mobile */
+    }
+
+    /* Section layout changes */
+    .section {
+        padding: 30px 10px;
+    }
+
+    /* Adjust containers to stack vertically */
+    .container {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .left, .right {
+        flex: none;
+        width: 80%;
+        text-align: center;
+    }
+
+    /* Adjust profile image size */
+    .right img {
+        max-width: 200px;
+    }
+
+    /* Passion section font size */
+    .passion p {
+        font-size: 1rem;
+        margin-top: -20px;
+        width: 80%
+    }
+
+    /* Footer adjustments */
+    footer {
+        padding: 20px 10px;
+    }
+}

@@ -1,0 +1,108 @@
+/* General Page Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Back Button Styles */
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 2rem; /* Adjust size as needed */
+    color: #0077b6; /* Color of the arrow */
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.back-button:hover {
+    color: #005f85; /* Darken the color on hover */
+}
+
+/* Page Title */
+.page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-top: 50px;
+    color: #0077b6;
+}
+
+/* Projects Container */
+.projects-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    gap: 30px;
+}
+
+/* Project Card Styling */
+.project-card {
+    background: #fff;
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    position: relative; 
+    padding-bottom: 70px; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Project Details */
+.project-details {
+    padding: 20px;
+    text-align: center;
+}
+
+.project-details h2 {
+    font-size: 1.6rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.project-details p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* GitHub Link Button Styling */
+.project-link {
+    position: absolute; 
+    bottom: 35px; 
+    left: 50%;
+    transform: translateX(-50%); /* Center the button horizontally */
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #0077b6;
+    border: 2px solid #0077b6;
+    border-radius: 20px;
+    transition: background-color 0.3s, color 0.3s;
+    height: 50px;
+    line-height: 50px; 
+    width: 70%; 
+}
+
+.project-link:hover {
+    background-color: #0077b6;
+    color: #fff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .projects-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
