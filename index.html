@@ -33,7 +33,7 @@
                     <p class="terminal-text"><li>Technology Consultant</li></p>
                     <br>
                     <p class="terminal-text">Welcome to RW Linux 1.0</p>
-                    <p class="terminal-text">→→Scroll down for keyboard</p>
+                    <p class="terminal-text">→→Scroll down for keyboard & menu options</p>
                     <p class="terminal-text">→→Type 'help' to see available commands</p>
                     <br>
                     <div id="output"></div>
@@ -67,6 +67,38 @@
                 <div class="key shift">shift</div>
             </div>
         </div>
+    </div>
+
+    <!-- Navbar (Initially Hidden) -->
+    <div class="navbar" id="navbar">
+        <div class="nav-container">
+            <!-- Hamburger Menu -->
+            <div class="nav-item" id="hamburger">&#9776;</div>
+
+            <!-- External Links -->
+            <a href="https://www.linkedin.com/in/rwallman/" target="_blank" class="nav-item">
+                <img src="./images/linkedin.png" alt="LinkedIn">
+            </a>
+            <a href="https://github.com/ryanwallman/" target="_blank" class="nav-item github">
+                <img src="./images/github.png" alt="GitHub">
+            </a>
+        </div>
+
+        <!-- Submenu (Hidden by Default) -->
+        <ul id="submenu" class="submenu">
+            <a href="./pages/about.html" target="_blank" class="sub-nav-item sub">
+                About
+            </a>
+            <a href="./pages/experience.html/" target="_blank" class="sub-nav-item sub">
+                Experience
+            </a>
+            <a href="./pages/projects.html" target="_blank" class="sub-nav-item sub">
+                Projects
+            </a>
+            <a href="./pages/skills.html" target="_blank" class="sub-nav-item">
+                Skills
+            </a>
+        </ul>
     </div>
 
     <script src="script.js"></script>
