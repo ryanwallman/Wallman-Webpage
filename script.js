@@ -7,24 +7,31 @@ document.addEventListener("DOMContentLoaded", function() {
     const inputField = document.getElementById("commandInput");
     const outputDiv = document.getElementById("output");
     const keys = document.querySelectorAll(".key");
+    const keyboard = document.querySelector(".keyboard"); // Keyboard container
     const navbar = document.getElementById("navbar");
-    const powerButton = document.querySelector(".power-button"); // Fix missing reference
+    const powerButton = document.querySelector(".power-button"); 
+    const hamburger = document.getElementById("hamburger");
+    const submenu = document.getElementById("submenu");
 
     let zoomEnabled = false;
-    let scale = 2; // Start fully zoomed in on the monitor
+    let scale = window.innerWidth <= 750 ? 1.5 : 2; // Adjust initial zoom based on screen width
+
+    // Initially hide keyboard and navbar
+    navbar.style.display = "none";
+    keyboard.style.display = "none"; 
 
     // Set initial zoom only on the monitor
-    terminalScreen.style.transform = `scale(${scale})`;
-    terminalScreen.style.transformOrigin = "center center";
-    terminalScreen.style.transition = "transform 1s ease-in-out";
-    terminalScreen.style.position = "fixed";
-    terminalScreen.style.top = "75%";
-    terminalScreen.style.left = "50%";
-    terminalScreen.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    function applyZoom() {
+        terminalScreen.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        terminalScreen.style.transformOrigin = "center center";
+        terminalScreen.style.transition = "transform 1s ease-in-out";
+        terminalScreen.style.position = "fixed";
+        terminalScreen.style.top = "75%";
+        terminalScreen.style.left = "50%";
+    }
 
-    // Initially hide navbar
-    navbar.style.display = "none";
-    
+    applyZoom(); // Apply initial zoom settings
+
     // Simulated Boot Loading
     let progress = 0;
     const interval = setInterval(() => {
@@ -40,40 +47,58 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }, 100);
 
-    window.addEventListener("wheel", function(event) {
+    let startY = 0; // For mobile touch scrolling
+
+    function handleZoomOut() {
         if (!zoomEnabled) return;
 
-        // Decrease zoom on scroll and limit the scale to a minimum of 1 (zoom out only)
-        if (event.deltaY > 0) {
-            scale -= event.deltaY * 0.05;
-            scale = Math.max(1, scale); // Prevent zooming in, limit scale to 1
-        }
-
+        scale -= 0.05;
+        scale = Math.max(1, scale); 
         terminalScreen.style.transform = `translate(-50%, -85%) scale(${scale})`;
 
-        // Show navbar after zooming out
-        if (scale <= 1.5) { 
-            navbar.style.display = "flex"; // Show the navbar
+        // Show navbar and keyboard when zooming out
+        if (scale <= 1.3) { 
+            navbar.style.display = "flex"; 
+            keyboard.style.display = "flex"; // Show keyboard
+        }
+    }
+
+    // Handle mouse wheel scrolling (for desktop)
+    window.addEventListener("wheel", function(event) {
+        if (event.deltaY > 0) { // Scroll down to zoom out
+            handleZoomOut();
+        }
+    });
+
+    // Handle touch scrolling (for mobile)
+    window.addEventListener("touchstart", function(event) {
+        if (!zoomEnabled) return;
+        startY = event.touches[0].clientY;
+    });
+
+    window.addEventListener("touchmove", function(event) {
+        if (!zoomEnabled) return;
+        let deltaY = event.touches[0].clientY - startY;
+        if (deltaY > 20) {  // Detect downward swipe
+            handleZoomOut();
         }
     });
 
     function autoScroll() {
         if (window.innerWidth <= 768) { 
-            let screen = document.querySelector(".screen");
             setTimeout(() => {
                 screen.scrollTop = screen.scrollHeight;
-            }, 50); // Small delay to ensure content is added before scrolling
+            }, 50); 
         }
     }
     
-    // Example: Call autoScroll() whenever new content is added
     function addTerminalText(text) {
         let terminal = document.querySelector(".screen");
         let newLine = document.createElement("div");
         newLine.classList.add("terminal");
         newLine.textContent = text;
         terminal.appendChild(newLine);
-        autoScroll(); // Auto-scroll only if width <= 768px
+        autoScroll();
     }
 
     // Process Commands
@@ -109,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         outputDiv.innerHTML += `<p>C:\\> ${command}</p><p>${response}</p>`;
-        autoScroll(); // Auto-scroll after adding response
+        autoScroll();
     }
 
     // On-Screen Keyboard Functionality
@@ -136,23 +161,18 @@ document.addEventListener("DOMContentLoaded", function() {
         const isOn = powerButton.classList.contains("on");
 
         if (isOn) {
-            // Turn off: make the monitor invisible and non-interactive
-            screen.style.opacity = "0";         // Make the monitor invisible
-            screen.style.pointerEvents = "none"; // Disable interactions with the monitor
+            screen.style.opacity = "0";         
+            screen.style.pointerEvents = "none"; 
             powerButton.classList.remove("on");
             powerButton.classList.add("off");
         } else {
-            // Turn on: make the monitor visible and interactive
-            screen.style.opacity = "1";          // Make the monitor visible again
-            screen.style.pointerEvents = "auto"; // Re-enable interactions with the monitor
+            screen.style.opacity = "1";          
+            screen.style.pointerEvents = "auto"; 
             powerButton.classList.remove("off");
             powerButton.classList.add("on");
-            inputField.focus(); // Focus input when turning on
+            inputField.focus();
         }
     });
-
-    const hamburger = document.getElementById("hamburger");
-    const submenu = document.getElementById("submenu");
 
     // Toggle the submenu when the hamburger is clicked
     hamburger.addEventListener("click", function() {
