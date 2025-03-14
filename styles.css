@@ -418,10 +418,10 @@ body {
         justify-content: center;
         margin: 3px 0;
     }
-    
+
     .key {
-        background: #555;
-        color: white;
+        background: #949494;
+        color: rgb(0, 0, 0);
         padding: 3px;
         margin: 2px;
         border-radius: 5px;
