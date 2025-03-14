@@ -1,56 +1,161 @@
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: black; 
-    color: white;
-}
-
-
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-}
-
-.table-container {
+.wrapper {
+    width: 100%;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-container {
+    display: flex;
+    width: 100%;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.left-header, .center-header, .right-header {
+    text-align: left;
+    font-family: Arial, sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    padding: 40px;
+    padding-bottom: 0px;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    position: relative; 
-    z-index: 10; 
+    flex: 1;
 }
 
 
-/* Table styling */
-table {
-    width: 60%;
-    border-collapse: separate; /* Must be 'separate' for border-spacing to work */
-    border-spacing: 0.8vw 0px; /* Adjust the gap size */
+.title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+}
+
+.designer-container, .coder-container {
+    width: 20vw;
+}
+
+.designer, .coder, .description {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    text-align: left;
+}
+
+.problem-solver {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
     color: white;
+<<<<<<< Updated upstream
     table-layout: fixed;
+=======
+}
+
+.developer {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: white;
+
+}
+
+.description {
+    font-size: 0.8rem;
+    color: rgb(192, 192, 192);
+}
+
+.ryan, .wallman {
+    color: white;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    text-align: left;
+}
+
+.ryan {
+    font-size: 4rem;
+}
+
+.wallman {
+    font-size: 6rem;
+>>>>>>> Stashed changes
 }
 
 
-/* Table borders */
-th, td {
-    border: 0.2vw solid white;
-    padding: 1vw;
-    width: 8vw;
+.boxes-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    height: 60vh;
+    align-items: center;
+    padding: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
     background-color: black;
-    font-size: 1.2vw;
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 
-th {
-    overflow-wrap: break-word; 
-    white-space: normal; 
-    text-align: Left;
-    vertical-align: top;
+.left-box {
+    width: 50%;
+    height: 80%;
+    background-color: #3720df;
+    margin: 20px;
+    border-radius: 55px;
+    transition: transform 0.3s ease;
+}
+.right-boxes {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 80%;
+    transition: transform 0.3s ease;
+}
+.top-boxes {
+    display: flex;
+    height: 50%;
+}
+.top-boxes .l-box {
+    width: 50%;
+    height: 100%;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border-radius: 55px;
+    transition: transform 0.3s ease;
+}
+.top-boxes .r-box {
+    width: 50%;
+    height: 100%;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    background-color: #4c4c4c;
+    border-radius: 55px;
+    transition: transform 0.3s ease;
+}
+.bottom-box {
+    width: 100%;
+    height: 50%;
+    margin-top: 20px;
+    background-color: #f1ff85;
+    border-radius: 55px;
+    transition: transform 0.3s ease;
+}
+.left-box:hover, .l-box:hover, .r-box:hover, .bottom-box:hover {
+    transform: scale(1.05);
 }
 
 
+<<<<<<< Updated upstream
 tr:first-child td {
     border-bottom: none;
 }
@@ -86,6 +191,84 @@ tr:nth-child(2) td {
 
 p {
     font-size: 0.8vw;
+=======
+
+
+@media screen and (max-width: 1100px) {
+    body {
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+    }
+
+    .left-header, .right-header {
+        display: none;
+    }
+
+    .wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .ryan {
+        font-size: 4rem;
+    }
+    
+    .wallman {
+        font-size: 5.5rem;
+    }
+
+    .boxes-container, .right-boxes, .top-boxes {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .right-boxes {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .top-boxes {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+
+    .left-box, .top-boxes .l-box, .top-boxes .r-box, .bottom-box {
+        width: 90%;
+        height: 250px; 
+        border-radius: 20px;
+        margin: 10px 0;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .left-box { background-color: #3720df; }
+    .top-boxes .l-box { background-color: #ffffff; }
+    .top-boxes .r-box { background-color: #4c4c4c; }
+    .bottom-box { background-color: #f1ff85; height: 70px}
+
+    .left-box:hover, .l-box:hover, .r-box:hover, .bottom-box:hover {
+        transform: scale(1.05);
+    }
+>>>>>>> Stashed changes
 }
 
 
