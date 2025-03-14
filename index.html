@@ -2,52 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Ryan Wallman</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Terminal</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 </head>
 <body>
-    <canvas id="constellationCanvas"></canvas>
-
-    <div class="table-container">
-        <table>
-            <tr>
-                <td class="bg-cell1" onclick="location.href='pages/about.html'"></td>
-                <td class="bg-cell2" onclick="location.href='pages/experience.html'"></td>
-                <td class="bg-cell3" onclick="location.href='pages/projects.html'"></td>
-                <td class="bg-cell4" onclick="location.href='pages/skills.html'"></td>
-            </tr>
-            <tr>
-                <th onclick="location.href='pages/about.html'">
-                    About Me
-                    <p>
-                        I'm a senior computer science student at the University of Maryland. I am a full stack developer with interest and experience in numerous technologies.
-                    </p>
-                </th>
-                <th onclick="location.href='pages/experience.html'">
-                    Experience
-                    <p>
-                        I've gained diverse professional experience, from working with the University of Maryland Football Team to contributing at MarketAxess, a publicly traded FinTech company modernizing the fixed-income market.
-                    </p>
-                </th>
-                <th onclick="location.href='pages/projects.html'">
-                    Projects
-                    <p>
-                        In and out of school I have had the opportunity to apply my technical and analytical skills across a variety of projects.
-                    </p>
-                </th>
-                <th onclick="location.href='pages/skills.html'">
-                    Skills
-                    <p>
-                        Through my experiences, I have developed a strong skill set that prepares me for future opportunities.
-                    </p>
-                </th>
-            </tr>
-            
-        </table>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-container">
+            <p>Booting up...</p>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
     </div>
-    
-    <script src="scripts/constellations.js"></script>
+
+    <!-- Retro Computer -->
+    <div class="computer">
+
+        <div class="power-button on" id="powerButton"></div>
+
+        <div class="monitor">
+            <div class="screen" id="screen">
+                <div class="terminal" id="terminal">
+                    <p class="terminal-text">Hi there,</p>
+                    <br>
+                    <p class="terminal-text name">I'm Ryan W</p>
+                    <br>
+                    <p class="terminal-text"><li>Software Engineer</li></p>
+                    <p class="terminal-text"><li>Technology Consultant</li></p>
+                    <br>
+                    <p class="terminal-text">Welcome to RW Linux 1.0</p>
+                    <p class="terminal-text">→→Scroll down for keyboard</p>
+                    <p class="terminal-text">→→Type 'help' to see available commands</p>
+                    <br>
+                    <div id="output"></div>
+                    <div class="input-line">
+                        <span>C:\></span>
+                        <input type="text" id="commandInput" autofocus>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard -->
+        <div class="keyboard">
+            <div class="keys">
+                <div class="key">q</div><div class="key">w</div><div class="key">e</div>
+                <div class="key">r</div><div class="key">t</div><div class="key">y</div>
+                <div class="key">u</div><div class="key">i</div><div class="key">o</div>
+                <div class="key">p</div>
+                <div class="key delete">delete</div>
+            </div>
+            <div class="keys">
+                <div class="key">a</div><div class="key">s</div><div class="key">d</div>
+                <div class="key">f</div><div class="key">g</div><div class="key">h</div>
+                <div class="key">j</div><div class="key">k</div><div class="key">l</div>
+                <div class="key enter">enter</div>
+            </div>
+            <div class="keys">
+                <div class="key">z</div><div class="key">x</div><div class="key">c</div>
+                <div class="key">v</div><div class="key">b</div><div class="key">n</div>
+                <div class="key">m</div>
+                <div class="key shift">shift</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
