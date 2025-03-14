@@ -177,6 +177,7 @@ body {
     padding: 10px;
     margin: 2px;
     border-radius: 5px;
+    font-size: 15px;
     box-shadow: 2px 2px 0 black;
     text-align: center;
     min-width: 40px;
@@ -365,7 +366,7 @@ body {
     .terminal-text.name {
         background-color: limegreen;
         color: #222;
-        font-size: large;
+        font-size: small;
         padding: 8px;
     }
     
@@ -421,12 +422,13 @@ body {
     .key {
         background: #555;
         color: white;
-        padding: 1.5px;
-        margin: 1px;
+        padding: 3px;
+        margin: 2px;
         border-radius: 5px;
         box-shadow: 2px 2px 0 black;
         text-align: center;
         min-width: 10px;
+        font-size: 13px;
         cursor: pointer;
     }
     
