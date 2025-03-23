@@ -1,67 +1,23 @@
-/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f8f8f8;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-/* Back Button Styles */
-.back-button {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 2rem; /* Adjust size as needed */
-    color: #0077b6; /* Color of the arrow */
-    text-decoration: none;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.back-button:hover {
-    color: #005f85; /* Darken the color on hover */
-}
-
-.skills-page {
-    padding: 5vw;
-    margin: 3vw;
-    background: linear-gradient(to right, #00c6ff, #0072ff);
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.page-title {
-    text-align: center;
-    font-size: 3rem;
-    margin-bottom: 30px;
-    color: white;
-    text-transform: uppercase;
-}
 
 .skills-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns on larger screens */
     gap: 30px;
-    justify-content: space-between;
 }
 
 .skills-card {
     background: #fff;
     border-radius: 12px;
-    width: 48%;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
+}
+
+/* Ensure that on smaller screens, it stacks into one column */
+@media screen and (max-width: 768px) {
+    .skills-container {
+        grid-template-columns: 1fr; /* One column on smaller screens */
+    }
 }
 
 .skills-card:hover {
@@ -69,7 +25,7 @@ body {
 }
 
 .card-header {
-    background: #2b85c2;
+    background:  #00A3FF;;
     padding: 20px;
     border-radius: 12px 12px 0 0;
     text-align: center;
@@ -118,8 +74,14 @@ body {
 }
 
 @media screen and (max-width: 600px) {
+    .skills-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centers the skills cards */
+    }
+
     .skills-card {
-        width: 100%;
+        width: 90%;
     }
 
     .skill-item {
