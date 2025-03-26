@@ -5,7 +5,7 @@ let history = [];
 let historyIndex = -1;
 
 // Initial welcome message
-const welcomeMessage = `Wallman OS v1.0\n\Type 'help' for commands\n\nReady\n> `;
+const welcomeMessage = `Hi there,\nI'm Ryan Wallman\n·Software Engineer\n·Technology Consultant\n\nWelcome to Wallman OS v1.0\n\Type 'help' for commands\n\n> `;
 display.textContent = welcomeMessage;
 
 // Create cursor element
@@ -101,44 +101,71 @@ function executeCommand(cmd) {
     // Process command
     let response = "";
 
-    if (cmd.toLowerCase() === "help") {
-        response = "\nCommands:\nhelp - Show help\nclear - Clear screen\nabout - System info\nexperience - View experience\nskills - View skills\nprojects - View projects\ncontact - Contact info\n";
-    } else if (cmd.toLowerCase() === "clear") {
-        display.textContent = "> ";
-        display.appendChild(cursor);
-        display.scrollTop = 0;
-        return;
-    } else if (cmd.toLowerCase() === "about") {
-        response = "\nLearn more about me\n";
-        document.getElementById("about-section")?.scrollIntoView({ behavior: 'smooth' });
-    } else if (cmd.toLowerCase() === "experience") {
-        response = "\nReview my experience\n";
-        document.getElementById("experience-section")?.scrollIntoView({ behavior: 'smooth' });
-    } else if (cmd.toLowerCase() === "skills") {
-        response = "\nCheck out my skills\n";
-        document.getElementById("skills-section")?.scrollIntoView({ behavior: 'smooth' });
-    } else if (cmd.toLowerCase() === "projects") {
-        response = "\nView my projects\n";
-        document.getElementById("projects-section")?.scrollIntoView({ behavior: 'smooth' });
-    } else if (cmd.toLowerCase() === "contact") {
-        response = "\nContact me\n";
-        document.getElementById("contact-section")?.scrollIntoView({ behavior: 'smooth' });
-    } else if (cmd.trim() !== "") {
-        response = `\n${cmd}: command not found\n`;
+    switch (cmd.toLowerCase()) {
+        case "help":
+            response = "\nCommands:\n- help - Show help\n- about - Who am I?\n- experience - my experience\n- skills - my skills\n- projects - my projects\n- contact - contact me\n- clear - Clear screen\n- reset - Reset screen";
+            break;
+        case "clear":
+            display.innerHTML = "> ";
+            display.appendChild(cursor);
+            display.scrollTop = 0;
+            return;
+        case "reset":
+            display.innerHTML = "" + welcomeMessage;
+            display.appendChild(cursor);
+            display.scrollTop = 0;
+            return;
+        case "about":
+            response = "<br>Redirecting to About...";
+            document.getElementById("about")?.scrollIntoView({ behavior: 'smooth' });
+            break;
+        case "experience":
+            response = "<br>Redirecting to Experience...";
+            document.getElementById("experience")?.scrollIntoView({ behavior: 'smooth' });
+            break;
+        case "skills":
+            response = "<br>Redirecting to Skills...";
+            document.getElementById("skills")?.scrollIntoView({ behavior: 'smooth' });
+            break;
+        case "projects":
+            response = "<br>Redirecting to Projects...";
+            document.getElementById("projects")?.scrollIntoView({ behavior: 'smooth' });
+            break;
+        case "contact":
+            response = "<br>Redirecting to Contact...";
+            document.getElementById("contact")?.scrollIntoView({ behavior: 'smooth' });
+            break;
+        default:
+            response = `<br>${cmd}: command not found`;
     }
 
-    // Add response and new prompt
-    display.textContent += response + "\n> ";
+    // Append response to the display
+    display.innerHTML += `<br>\n${response}\n\n<br>> `;
     display.appendChild(cursor);
 
     // Auto-scroll to bottom
     display.scrollTop = display.scrollHeight;
+    
 }
+
+
+
 
 // Drag to rotate functionality
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let currentRotation = { x: -15, y: 30 };
+
+// Add rolling scanline effect
+const rollingLine = document.createElement("div");
+rollingLine.classList.add("rolling-line");
+document.querySelector(".screen").appendChild(rollingLine);
+
+// Add scanline effect
+const scanlines = document.createElement("div");
+scanlines.classList.add("scanlines");
+document.querySelector(".screen").appendChild(scanlines);
+
 
 cube.addEventListener("mousedown", (e) => {
     // Only start dragging if not clicking on the screen
