@@ -149,6 +149,34 @@ function executeCommand(cmd) {
 }
 
 
+// Check if the user is on a mobile device
+function isMobile() {
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+if (isMobile()) {
+    // Create a hidden input field
+    const hiddenInput = document.createElement("input");
+    hiddenInput.type = "text";
+    hiddenInput.style.position = "absolute";
+    hiddenInput.style.opacity = 0;
+    hiddenInput.style.height = "0px";
+    hiddenInput.style.width = "0px";
+    hiddenInput.style.zIndex = "-1";
+    document.body.appendChild(hiddenInput);
+
+    // When the display is clicked, focus on the hidden input
+    display.addEventListener("click", () => {
+        hiddenInput.focus();
+    });
+
+    // Handle input from the hidden input field
+    hiddenInput.addEventListener("input", (e) => {
+        commandLine += e.data || "";
+        updateDisplay();
+    });
+}
+
 
 
 // Drag to rotate functionality
