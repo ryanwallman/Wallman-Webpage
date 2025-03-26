@@ -281,3 +281,26 @@ document.getElementById('hamburger').addEventListener('click', function() {
     const submenu = document.getElementById('submenu');
     submenu.classList.toggle('submenu-visible');
 });
+
+// Only apply to mobile devices
+if (window.innerWidth <= 600) {
+    document.addEventListener('focusin', function(e) {
+      // Prevent scrolling when an input is focused
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        // Save the current scroll position
+        const scrollPosition = window.scrollY;
+  
+        // Set a timeout to reset scroll position to prevent auto scrolling
+        setTimeout(function() {
+          window.scrollTo(0, scrollPosition);
+        }, 100); // Adjust the delay as needed
+      }
+    });
+  
+    // Optionally, reset scroll behavior when input loses focus
+    document.addEventListener('focusout', function() {
+      // Reset scroll position or perform other actions if needed
+      // For now, we don't need to do anything specific here
+    });
+  }
+  
