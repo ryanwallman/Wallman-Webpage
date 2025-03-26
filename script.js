@@ -87,8 +87,12 @@ function updateDisplay() {
     display.textContent = staticContent + commandLine;
     display.appendChild(cursor);
 
-    // Auto-scroll to bottom
-    display.scrollTop = display.scrollHeight;
+    // Auto-scroll to bottom only if the user is at the bottom
+    const isScrolledToBottom = display.scrollHeight - display.scrollTop === display.clientHeight;
+    
+    if (isScrolledToBottom) {
+        display.scrollTop = display.scrollHeight;
+    }
 }
 
 function executeCommand(cmd) {
@@ -145,9 +149,7 @@ function executeCommand(cmd) {
 
     // Auto-scroll to bottom
     display.scrollTop = display.scrollHeight;
-    
 }
-
 
 // Check if the user is on a mobile device
 function isMobile() {
@@ -175,9 +177,20 @@ if (isMobile()) {
         commandLine += e.data || "";
         updateDisplay();
     });
+
+    // Handle Enter key press to execute the command
+    hiddenInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            // Execute command on pressing Enter
+            executeCommand(commandLine);
+            commandLine = "";
+            historyIndex = -1;
+            updateDisplay();
+            // Prevent default action to avoid creating a new line in the hidden input
+            e.preventDefault();
+        }
+    });
 }
-
-
 
 // Drag to rotate functionality
 let isDragging = false;
@@ -193,7 +206,6 @@ document.querySelector(".screen").appendChild(rollingLine);
 const scanlines = document.createElement("div");
 scanlines.classList.add("scanlines");
 document.querySelector(".screen").appendChild(scanlines);
-
 
 cube.addEventListener("mousedown", (e) => {
     // Only start dragging if not clicking on the screen
