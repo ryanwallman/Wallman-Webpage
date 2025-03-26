@@ -239,7 +239,16 @@ html {
   scroll-behavior: smooth;
 }
 
+body {
+  overflow: hidden; /* Prevent page scrolling */
+}
+
 @media (max-width: 600px) {
+
+  body {
+    overflow: auto; /* Enable scrolling when keyboard is closed */
+  }
+
   .scene {
     width: 260px;
     height: 260px;
