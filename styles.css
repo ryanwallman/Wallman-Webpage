@@ -413,30 +413,219 @@ html {
 .submenu {
   display: none;
   position: absolute;
-  top: 60px;
+  top: 50px;
   left: 0;
   background-color: #777;
   padding: 20px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .submenu a{
   color:  white;
   font-size: smaller;
   text-decoration: none;
+  font-weight: bold;
 }
 
 /* Show Submenu on Click */
 .submenu-visible {
   display: block;
 }
-
 /* END NAVBAR */
 
 
 
-/* ABOUT */
+/* EXPERIENCE */
 
+
+.content-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  border: 0.5vw solid #0d76bd;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  color: black;
+  width: 60vw;
+}
+
+.timeline {
+  position: relative;
+  margin: 50px auto;
+  padding-bottom: 20px;
+  max-width: 800px;
+  padding-bottom: 80px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  background: #0d76bd; /* Central timeline line */
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  position: relative;
+  width: 50%;
+  padding: 20px;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  margin-bottom: -150px;
+}
+
+.timeline-item.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-item:nth-child(odd) {
+  left: 0;
+  text-align: left;
+}
+
+.timeline-item:nth-child(even) {
+  left: 50%;
+  text-align: left;
+}
+
+.timeline-content {
+  background: white;
+  color: black;
+  padding: 15px;
+  border: 0.2vw solid #0d76bd;
+  border-radius: 15px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.timeline-content img {
+  border-radius: 50px;
+}
+
+.timeline-content::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  background: #0d76bd;
+  border-radius: 50%;
+  border: 3px solid white;
+  transform: translateY(-50%);
+}
+
+.timeline-item:nth-child(odd) .timeline-content::before {
+  right: -33px;
+}
+
+.timeline-item:nth-child(even) .timeline-content::before {
+  left: -33px;
+}
+
+/* Icon Styling */
+.timeline-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid #0d76bd;
+  transform: translate(-50%, -50%);
+}
+
+.timeline-icon i {
+  font-size: 20px;
+  color: #0d76bd;
+}
+
+/* Date Styling */
+.timeline-date {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+@media (max-width: 850px) {
+
+  .timeline{
+      padding-bottom: 0;
+  }
+
+  .timeline::before {
+      left: 35px; /* Keeps the timeline line on the left */
+  }
+
+  .timeline-item {
+      width: 100%;
+      padding-left: 40px; /* Space from timeline */
+      text-align: left;
+      position: relative;
+      left: 0 !important; /* Forces all items to align left */
+      margin-bottom: 0px;
+  }
+
+  .timeline-item .timeline-content {
+      width: 85%;
+      text-align: left;
+  }
+
+  .timeline-content::before {
+      left: -25px; /* Aligns the dot to the left */
+      right: auto;
+  }
+
+
+  .timeline-icon i {
+      font-size: 14px; /* Smaller icon inside */
+  }
+
+  .timeline-date {
+      position: absolute;
+      top: 5px;
+      font-size: 10px;
+      margin: 3px;
+      white-space: nowrap;
+  }
+
+  .timeline-content {
+      padding: 20px;
+      font-size: 12px; /* Smaller text */
+  }
+}
+
+.company-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Space between text and logo */
+  text-decoration: none;
+  color: inherit; /* Keeps text color same as the parent */
+}
+
+.company-logo {
+  width: 3vw; /* Adjust size as needed */
+  height: auto;
+  display: inline-block;
+}
+
+
+
+/* END EXPERIENCE */
+
+
+
+
+
+/* ABOUT */
 .about-container {
   display: flex;
   flex-wrap: wrap;
