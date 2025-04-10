@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Draw Something!</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f0f0f0;
+      padding: 1rem;
+    }
+
+    #backBtn {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background-color: #1aa3ff;
+      color: #fff;
+      padding: 1rem 1rem;
+      border: none;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      z-index: 10;
+    }
+
+    #backBtn:hover {
+      background-color: #2a8bcc;
+    }
+
+    h1 {
+      margin-top: 3rem;
+    }
+
+    #controls {
+      margin-bottom: 1rem;
+    }
+
+    #controls label {
+      margin-right: 1rem;
+    }
+
+    #controls button {
+        background-color: #1aa3ff;
+        padding: 10px;
+        font-size: medium;
+        color: white;
+        border: 0.1rem solid white;
+        border-radius: 5px;
+    }
+
+    canvas {
+      border: 3px solid #1aa3ff;
+      border-radius: 15px;
+      background-color: white;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body>
+
+  <a id="backBtn" href="index.html#projects">← Back</a>
+
+  <h1 style="color: #1aa3ff">Draw Something</h1>
+
+  <div id="controls">
+    <label>
+      Pen Color:
+      <input type="color" id="penColor" value="#000000" />
+    </label>
+    <label>
+      Background:
+      <input type="color" id="bgColor" value="#ffffff" />
+    </label>
+    <label>
+        <span>Brush Size:</span>
+        <input type="range" id="brushSize" min="1" max="30" value="5" />
+      </label>
+      <button id="clearBtn">Clear</button>
+      <button id="downloadBtn">Download as PNG</button>
+  </div>
+
+  <canvas id="drawCanvas" width="800" height="500"></canvas>
+
+  <script>
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d');
+    const penColorInput = document.getElementById('penColor');
+    const bgColorInput = document.getElementById('bgColor');
+    const clearBtn = document.getElementById('clearBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const brushSizeInput = document.getElementById('brushSize');
+  
+    let drawing = false;
+    let penColor = penColorInput.value;
+    let brushSize = brushSizeInput.value;
+    let lastX = 0;
+    let lastY = 0;
+  
+    // Set canvas background color
+    function setCanvasBackground(color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Initialize background
+    setCanvasBackground(bgColorInput.value);
+
+    // Event listeners for pen and background color
+    penColorInput.addEventListener('input', (e) => {
+      penColor = e.target.value;
+    });
+
+    bgColorInput.addEventListener('input', (e) => {
+      setCanvasBackground(e.target.value);
+    });
+
+    // Clear button functionality
+    clearBtn.addEventListener('click', () => {
+      setCanvasBackground(bgColorInput.value);
+    });
+
+    // Download canvas as PNG
+    downloadBtn.addEventListener('click', () => {
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = 'drawing.png';
+      link.click();
+    });
+
+    // Brush size change event
+    brushSizeInput.addEventListener('input', (e) => {
+      brushSize = e.target.value;
+    });
+
+    // Drawing on canvas
+    canvas.addEventListener('mousedown', (e) => {
+      drawing = true;
+      const rect = canvas.getBoundingClientRect();
+      lastX = e.clientX - rect.left;
+      lastY = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const currentX = e.clientX - rect.left;
+      const currentY = e.clientY - rect.top;
+
+      ctx.strokeStyle = penColor;
+      ctx.lineWidth = brushSize; // Use the brush size set by the slider
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(currentX, currentY);
+      ctx.stroke();
+
+      lastX = currentX;
+      lastY = currentY;
+    });
+  </script>
+
+
+</body>
+</html>
