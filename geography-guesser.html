@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geography Guesser — Ryan Wallman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="geography-guesser.css">
+</head>
+<body>
+  <a class="gg-back" href="index.html#projects">← Back</a>
+
+  <main class="gg">
+    <header class="gg-brand">
+      <p class="gg-brand__eyebrow">Project</p>
+      <h1>Geography Guesser</h1>
+    </header>
+
+    <section class="gg-screen is-active" id="screen-select" aria-labelledby="select-title">
+      <h2 id="select-title">Choose a continent</h2>
+      <p class="gg-lead">Pick a region, then place pins on major cities. No Antarctica — nobody lives there.</p>
+      <div class="gg-continents" role="list">
+        <button type="button" class="gg-continent" data-continent="africa" role="listitem">Africa</button>
+        <button type="button" class="gg-continent" data-continent="asia" role="listitem">Asia</button>
+        <button type="button" class="gg-continent" data-continent="europe" role="listitem">Europe</button>
+        <button type="button" class="gg-continent" data-continent="north-america" role="listitem">North America</button>
+        <button type="button" class="gg-continent" data-continent="south-america" role="listitem">South America</button>
+        <button type="button" class="gg-continent" data-continent="oceania" role="listitem">Oceania</button>
+      </div>
+    </section>
+
+    <section class="gg-screen" id="screen-play" aria-labelledby="prompt-city" hidden>
+      <div class="gg-hud">
+        <div class="gg-hud__prompt">
+          <span class="gg-hud__label">Place the pin on</span>
+          <h2 id="prompt-city">—</h2>
+          <p class="gg-hud__meta" id="prompt-meta"></p>
+        </div>
+        <div class="gg-hud__score">
+          <span class="gg-hud__label">Score</span>
+          <p id="score-display">0</p>
+        </div>
+      </div>
+
+      <div class="gg-map-shell">
+        <div id="map" role="application" aria-label="Continent map — click to place your guess"></div>
+        <p class="gg-map-hint" id="map-hint">Click the map to drop your pin</p>
+      </div>
+
+      <div class="gg-actions">
+        <button type="button" class="gg-btn gg-btn--ghost" id="btn-change">Change continent</button>
+        <button type="button" class="gg-btn" id="btn-confirm" disabled>Confirm guess</button>
+      </div>
+
+      <div class="gg-result" id="result-panel" hidden>
+        <p class="gg-result__distance" id="result-distance"></p>
+        <p class="gg-result__detail" id="result-detail"></p>
+        <button type="button" class="gg-btn" id="btn-next">Next city</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="geography-guesser.js"></script>
+</body>
+</html>

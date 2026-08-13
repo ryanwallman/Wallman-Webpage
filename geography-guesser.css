@@ -1,0 +1,314 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #f0a830;
+  --white: #f8f4ee;
+  --ink: #020818;
+  --panel: rgba(6, 12, 28, 0.92);
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  color: var(--white);
+  background:
+    radial-gradient(ellipse 100% 60% at 50% -10%, #142038 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 100% 100%, #1a2a18 0%, transparent 45%),
+    #020818;
+}
+
+.gg-back {
+  position: fixed;
+  top: 1.15rem;
+  left: 1.15rem;
+  z-index: 40;
+  text-decoration: none;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(248, 244, 238, 0.55);
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(248, 244, 238, 0.18);
+  background: rgba(2, 8, 24, 0.55);
+  backdrop-filter: blur(10px);
+  transition: color 0.2s, border-color 0.2s;
+}
+.gg-back:hover {
+  color: var(--gold);
+  border-color: rgba(240, 168, 48, 0.45);
+}
+
+.gg {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 5.5rem 0 3.5rem;
+}
+
+.gg-brand {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.gg-brand__eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(248, 244, 238, 0.4);
+  margin-bottom: 0.45rem;
+}
+.gg-brand h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 8vw, 4.6rem);
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  line-height: 0.95;
+}
+
+.gg-screen[hidden],
+.gg-screen:not(.is-active) {
+  display: none;
+}
+.gg-screen.is-active {
+  display: block;
+}
+
+#screen-select h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  letter-spacing: 0.12em;
+  text-align: center;
+  font-weight: 400;
+}
+.gg-lead {
+  text-align: center;
+  max-width: 34rem;
+  margin: 0.75rem auto 2rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(248, 244, 238, 0.5);
+}
+
+.gg-continents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.85rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.gg-continent {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  background: transparent;
+  border: 1px solid rgba(248, 244, 238, 0.18);
+  padding: 1.15rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.gg-continent:hover,
+.gg-continent:focus-visible {
+  border-color: rgba(240, 168, 48, 0.7);
+  color: var(--gold);
+  background: rgba(240, 168, 48, 0.06);
+  outline: none;
+}
+
+.gg-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.gg-hud__label {
+  display: block;
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(248, 244, 238, 0.4);
+  margin-bottom: 0.25rem;
+}
+.gg-hud__prompt h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  line-height: 1;
+}
+.gg-hud__meta {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: rgba(248, 244, 238, 0.45);
+}
+.gg-hud__score {
+  text-align: right;
+}
+.gg-hud__score p {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+
+.gg-map-shell {
+  position: relative;
+  border: 1px solid rgba(248, 244, 238, 0.14);
+  overflow: hidden;
+  height: min(62vh, 560px);
+  min-height: 320px;
+}
+#map {
+  width: 100%;
+  height: 100%;
+  background: #0a1428;
+}
+.gg-map-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 0.85rem;
+  transform: translateX(-50%);
+  z-index: 500;
+  pointer-events: none;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(248, 244, 238, 0.7);
+  background: rgba(2, 8, 24, 0.72);
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(248, 244, 238, 0.12);
+}
+.gg-map-hint.is-hidden {
+  display: none;
+}
+
+.gg-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.85rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.gg-btn {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+.gg-btn:hover:not(:disabled),
+.gg-btn:focus-visible:not(:disabled) {
+  background: transparent;
+  color: var(--gold);
+  outline: none;
+}
+.gg-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.gg-btn--ghost {
+  background: transparent;
+  color: rgba(248, 244, 238, 0.65);
+  border-color: rgba(248, 244, 238, 0.22);
+}
+.gg-btn--ghost:hover,
+.gg-btn--ghost:focus-visible {
+  color: var(--gold);
+  border-color: rgba(240, 168, 48, 0.55);
+  background: transparent;
+}
+
+.gg-result {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.35rem;
+  background: var(--panel);
+  border: 1px solid rgba(240, 168, 48, 0.28);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+.gg-result[hidden] {
+  display: none;
+}
+.gg-result__distance {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.75rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+.gg-result__detail {
+  flex: 1 1 12rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: rgba(248, 244, 238, 0.55);
+}
+
+/* Leaflet overrides */
+.leaflet-container {
+  font-family: 'Lato', sans-serif;
+  background: #0a1428;
+}
+.leaflet-control-attribution {
+  background: rgba(2, 8, 24, 0.75) !important;
+  color: rgba(248, 244, 238, 0.4) !important;
+  font-size: 9px !important;
+}
+.leaflet-control-attribution a {
+  color: rgba(248, 244, 238, 0.55) !important;
+}
+.leaflet-bar a {
+  background: rgba(6, 12, 28, 0.92) !important;
+  color: var(--white) !important;
+  border-bottom-color: rgba(248, 244, 238, 0.12) !important;
+}
+.leaflet-bar a:hover {
+  background: rgba(20, 32, 56, 0.95) !important;
+  color: var(--gold) !important;
+}
+
+.gg-marker-guess,
+.gg-marker-truth {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(2, 8, 24, 0.45), 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+.gg-marker-guess {
+  background: var(--gold);
+}
+.gg-marker-truth {
+  background: #3ecf8e;
+}
+
+@media (max-width: 640px) {
+  .gg-back {
+    top: 0.85rem;
+    left: 0.85rem;
+  }
+  .gg {
+    padding-top: 4.75rem;
+  }
+  .gg-actions {
+    flex-direction: column;
+  }
+  .gg-btn,
+  .gg-btn--ghost {
+    width: 100%;
+    text-align: center;
+  }
+  .gg-hud__score {
+    text-align: left;
+  }
+}

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 900" role="img" aria-label="Commercial airliner side view">
+  <defs>
+    <linearGradient id="fuselageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8fbff"/>
+      <stop offset="50%" stop-color="#e8eef6"/>
+      <stop offset="100%" stop-color="#b6c2d2"/>
+    </linearGradient>
+    <linearGradient id="bellyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a2afc0"/>
+      <stop offset="100%" stop-color="#73829a"/>
+    </linearGradient>
+    <linearGradient id="blueStripe" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#003780"/>
+      <stop offset="100%" stop-color="#0a4ea3"/>
+    </linearGradient>
+    <linearGradient id="tailBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0050aa"/>
+      <stop offset="100%" stop-color="#012e6a"/>
+    </linearGradient>
+    <linearGradient id="engineMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#edf3fa"/>
+      <stop offset="55%" stop-color="#c0ccdb"/>
+      <stop offset="100%" stop-color="#7f8fa6"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="160%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="1080" cy="620" rx="730" ry="78" fill="#0a1d36" opacity="0.33" filter="url(#shadow)"/>
+
+  <g transform="translate(140 115)">
+    <path d="M90 286 C18 276 -3 229 4 198 C17 150 58 127 130 125 L1530 106 C1738 102 1841 120 1917 163 C1956 185 1986 220 1978 252 C1971 281 1939 301 1893 311 C1810 329 1708 340 1527 346 L170 358 C114 360 96 336 90 286 Z" fill="url(#fuselageGrad)"/>
+    <path d="M80 284 C95 314 122 329 170 332 L1522 319 C1688 314 1819 305 1892 291 C1935 282 1956 268 1960 245 C1965 218 1950 199 1909 177 C1928 204 1910 236 1866 250 C1790 274 1656 286 1518 292 L174 307 C127 309 100 299 80 284 Z" fill="url(#bellyGrad)" opacity="0.72"/>
+
+    <path d="M187 227 L1504 212 C1665 211 1796 200 1855 179 C1883 168 1892 156 1888 142 C1863 123 1825 110 1768 102 L278 126 C223 126 205 142 191 165 C177 188 175 209 187 227 Z" fill="url(#blueStripe)"/>
+
+    <path d="M300 108 L418 102 L404 28 L324 37 Z" fill="url(#tailBlue)"/>
+    <path d="M404 28 L480 -20 L442 45 Z" fill="#0f64c5"/>
+    <path d="M470 32 L498 -7 L489 49 Z" fill="#0d4a98"/>
+
+    <path d="M760 318 L1040 414 L1009 447 L714 350 Z" fill="#dbe4ef"/>
+    <path d="M1088 308 L1415 355 L1410 391 L1065 346 Z" fill="#dbe4ef"/>
+    <path d="M1042 412 L1147 502 L1111 512 L998 448 Z" fill="#9eacc0"/>
+
+    <ellipse cx="875" cy="378" rx="82" ry="53" fill="url(#engineMetal)"/>
+    <ellipse cx="1224" cy="402" rx="88" ry="56" fill="url(#engineMetal)"/>
+    <ellipse cx="875" cy="389" rx="46" ry="28" fill="#425672"/>
+    <ellipse cx="1224" cy="413" rx="50" ry="30" fill="#425672"/>
+
+    <g fill="#5a7291" opacity="0.92">
+      <ellipse cx="490" cy="174" rx="10" ry="8"/>
+      <ellipse cx="536" cy="171" rx="10" ry="8"/>
+      <ellipse cx="581" cy="168" rx="10" ry="8"/>
+      <ellipse cx="626" cy="166" rx="10" ry="8"/>
+      <ellipse cx="671" cy="164" rx="10" ry="8"/>
+      <ellipse cx="716" cy="162" rx="10" ry="8"/>
+      <ellipse cx="761" cy="160" rx="10" ry="8"/>
+      <ellipse cx="806" cy="159" rx="10" ry="8"/>
+      <ellipse cx="851" cy="158" rx="10" ry="8"/>
+      <ellipse cx="896" cy="158" rx="10" ry="8"/>
+      <ellipse cx="941" cy="157" rx="10" ry="8"/>
+      <ellipse cx="986" cy="157" rx="10" ry="8"/>
+      <ellipse cx="1031" cy="157" rx="10" ry="8"/>
+      <ellipse cx="1076" cy="157" rx="10" ry="8"/>
+      <ellipse cx="1121" cy="157" rx="10" ry="8"/>
+      <ellipse cx="1166" cy="157" rx="10" ry="8"/>
+      <ellipse cx="1211" cy="158" rx="10" ry="8"/>
+      <ellipse cx="1256" cy="160" rx="10" ry="8"/>
+      <ellipse cx="1301" cy="162" rx="10" ry="8"/>
+      <ellipse cx="1346" cy="164" rx="10" ry="8"/>
+      <ellipse cx="1391" cy="166" rx="10" ry="8"/>
+      <ellipse cx="1436" cy="170" rx="10" ry="8"/>
+    </g>
+
+    <path d="M1740 110 C1832 112 1902 132 1945 164 C1968 180 1984 199 1980 220 C1978 234 1968 248 1947 260 C1934 238 1911 217 1880 200 C1822 167 1736 150 1600 149 L1740 110 Z" fill="#eef4fb" opacity="0.9"/>
+    <path d="M1790 112 L1930 162 L1825 178 Z" fill="#9bb0c8" opacity="0.9"/>
+  </g>
+</svg>

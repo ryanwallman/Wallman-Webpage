@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-label="Top-down twin-engine airliner">
+  <defs>
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9ca9ba"/>
+      <stop offset="20%" stop-color="#d6deea"/>
+      <stop offset="52%" stop-color="#f8fbff"/>
+      <stop offset="82%" stop-color="#d2dbe7"/>
+      <stop offset="100%" stop-color="#95a2b5"/>
+    </linearGradient>
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f3f7fc"/>
+      <stop offset="55%" stop-color="#c8d2df"/>
+      <stop offset="100%" stop-color="#8e9bb0"/>
+    </linearGradient>
+    <linearGradient id="tailBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#073f83"/>
+      <stop offset="100%" stop-color="#001f4d"/>
+    </linearGradient>
+    <radialGradient id="windowGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#94b4d4"/>
+      <stop offset="100%" stop-color="#4f6f95"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
+      <feOffset dx="0" dy="12"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.03 0 0 0 0 0.08 0 0 0 0 0.16 0 0 0 0.4 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="engineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f1f5fb"/>
+      <stop offset="65%" stop-color="#a8b5c7"/>
+      <stop offset="100%" stop-color="#67778f"/>
+    </linearGradient>
+  </defs>
+
+  <ellipse cx="600" cy="645" rx="170" ry="342" fill="rgba(8,20,40,0.24)" filter="url(#shadow)"/>
+
+  <g transform="translate(600 600)">
+    <path d="M-42 -450 C-30 -520 30 -520 42 -450 L74 360 C81 438 58 504 0 542 C-58 504 -81 438 -74 360 Z" fill="url(#bodyGrad)" stroke="#dfe7f2" stroke-width="3"/>
+
+    <path d="M-48 -394 L48 -394 L43 -306 L-43 -306 Z" fill="#f7fbff" opacity="0.9"/>
+    <path d="M-52 -258 L52 -258 L46 315 L-46 315 Z" fill="#ecf2f9" opacity="0.72"/>
+
+    <path d="M-38 -445 C-20 -498 20 -498 38 -445 C16 -434 -16 -434 -38 -445 Z" fill="#f9fcff"/>
+    <path d="M-42 -448 C-11 -472 11 -472 42 -448" fill="none" stroke="#7f95b0" stroke-width="3"/>
+
+    <path d="M-250 -25 C-190 -95 -88 -112 -36 -80 L-44 -8 C-86 36 -184 72 -264 90 C-289 42 -286 6 -250 -25 Z" fill="url(#wingGrad)" stroke="#e8eef6" stroke-width="3"/>
+    <path d="M250 -25 C190 -95 88 -112 36 -80 L44 -8 C86 36 184 72 264 90 C289 42 286 6 250 -25 Z" fill="url(#wingGrad)" stroke="#e8eef6" stroke-width="3"/>
+
+    <path d="M-240 -20 C-184 -71 -98 -90 -48 -61" fill="none" stroke="#92a4ba" stroke-width="2" opacity="0.7"/>
+    <path d="M240 -20 C184 -71 98 -90 48 -61" fill="none" stroke="#92a4ba" stroke-width="2" opacity="0.7"/>
+
+    <path d="M-110 276 C-89 228 -42 205 0 205 C42 205 89 228 110 276 C74 293 31 304 0 304 C-31 304 -74 293 -110 276 Z" fill="#e1e8f2" stroke="#bac7d8" stroke-width="2"/>
+    <path d="M0 194 L42 292 L-42 292 Z" fill="url(#tailBlue)"/>
+
+    <ellipse cx="-108" cy="52" rx="30" ry="56" fill="url(#engineGrad)" stroke="#d7e0eb" stroke-width="2"/>
+    <ellipse cx="108" cy="52" rx="30" ry="56" fill="url(#engineGrad)" stroke="#d7e0eb" stroke-width="2"/>
+    <ellipse cx="-108" cy="59" rx="17" ry="31" fill="#364d6b"/>
+    <ellipse cx="108" cy="59" rx="17" ry="31" fill="#364d6b"/>
+
+    <path d="M-29 -335 C-9 -343 9 -343 29 -335 L26 -40 C7 -34 -7 -34 -26 -40 Z" fill="#00397f"/>
+
+    <g fill="url(#windowGlow)" opacity="0.93">
+      <ellipse cx="-13" cy="-302" rx="4.6" ry="6.2"/>
+      <ellipse cx="0" cy="-304" rx="4.6" ry="6.2"/>
+      <ellipse cx="13" cy="-302" rx="4.6" ry="6.2"/>
+      <ellipse cx="-13" cy="-282" rx="4.6" ry="6.2"/>
+      <ellipse cx="0" cy="-284" rx="4.6" ry="6.2"/>
+      <ellipse cx="13" cy="-282" rx="4.6" ry="6.2"/>
+    </g>
+
+    <path d="M-44 292 C-34 380 -16 458 0 508 C16 458 34 380 44 292" fill="none" stroke="#7788a0" stroke-width="5" opacity="0.65"/>
+  </g>
+</svg>

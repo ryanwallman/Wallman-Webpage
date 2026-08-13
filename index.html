@@ -1,106 +1,1559 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ryan Wallman - Home</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Take Flight</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --gold: #f0a830; --white: #f8f4ee; }
+  html, body { overflow-x: hidden; }
+  body { font-family: 'Lato', sans-serif; background: #020818; color: var(--white); }
+
+  /* No document scroll: wheel/touch drive flight, or undo after cruise (scroll only when p=1 / 35k ft) */
+  html.doc-scroll-locked,
+  html.doc-scroll-locked body {
+    overflow: hidden;
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  .scroll-driver { height: 100vh; position: relative; }
+
+  .scene {
+    position: sticky; top: 0;
+    width: 100%; height: 100vh;
+    overflow: hidden;
+  }
+
+  #three-canvas {
+    position: absolute; inset: 0;
+    width: 100% !important; height: 100% !important;
+    opacity: 1;
+  }
+
+  .sky-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, #020818 0%, #0a1a3d 55%, #182f5a 80%, #8b4a1a 100%);
+    pointer-events: none;
+  }
+
+  .stars-layer { position: absolute; inset: 0; pointer-events: none; }
+  .star { position: absolute; background: white; border-radius: 50%; }
+
+  .horizon-glow {
+    position: absolute; bottom: -5%; left: 50%;
+    transform: translateX(-50%);
+    width: 160%; height: 50%;
+    background: radial-gradient(ellipse at center bottom, rgba(232,120,20,0) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .speed-layer { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  .speed-streak {
+    position: absolute; height: 1px; opacity: 0.42;
+    background: linear-gradient(to right, transparent 0%, rgba(255,255,255,.16) 40%, rgba(255,255,255,.16) 60%, transparent 100%);
+  }
+
+  .contrail {
+    position: absolute; top: 50%; height: 3px; border-radius: 3px;
+    background: linear-gradient(to left, rgba(255,255,255,.55), transparent);
+    pointer-events: none; opacity: 0; width: 0;
+  }
+
+  .hud {
+    position: absolute; inset: 0;
+    padding: 3rem 4rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .hud-top {
+    display: flex; justify-content: flex-end; align-items: flex-start;
+    opacity: 0; transform: translateY(-16px);
+    transition: opacity .7s, transform .7s;
+  }
+  .hud-top.show { opacity: 1; transform: translateY(0); }
+
+  .flight-tag {
+    text-align: right; font-size: .65rem; letter-spacing: .22em;
+    text-transform: uppercase; color: rgba(248,244,238,.38); line-height: 2.1;
+  }
+
+  .hud-mid {
+    text-align: center; opacity: 0; transform: translateY(24px);
+    transition: opacity .8s .25s, transform .8s .25s;
+  }
+  .hud-mid.show { opacity: 1; transform: translateY(0); }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4.5rem, 13vw, 10.5rem);
+    letter-spacing: .1em; line-height: .88;
+  }
+  .hero-sub {
+    font-size: .8rem; letter-spacing: .42em; text-transform: uppercase;
+    color: rgba(248,244,238,.4); margin-top: .9rem;
+  }
+
+  .hud-bot {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity .7s .45s, transform .7s .45s;
+  }
+  .hud-bot.show { opacity: 1; transform: translateY(0); }
+
+  .scroll-hint {
+    font-size: .62rem; letter-spacing: .32em; text-transform: uppercase;
+    color: rgba(248,244,238,.32); display: flex; align-items: center; gap: .7rem;
+  }
+  .hint-line {
+    width: 36px; height: 1px; background: rgba(248,244,238,.2);
+    position: relative; overflow: hidden;
+  }
+  .hint-line::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: var(--gold); animation: hintSlide 2.2s ease-in-out infinite;
+  }
+  @keyframes hintSlide { 0%{left:-100%} 50%{left:100%} 100%{left:100%} }
+
+  .alt-meter {
+    text-align: right; font-size: .62rem; letter-spacing: .22em;
+    text-transform: uppercase; color: rgba(248,244,238,.32);
+  }
+  .alt-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem;
+    color: var(--gold); display: block; letter-spacing: .1em;
+  }
+
+  /* Loading screen */
+  #loader {
+    position: fixed; inset: 0; background: #020818;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1rem; z-index: 100; transition: opacity .8s;
+    padding: 2rem 1.5rem;
+  }
+  #loader.fade { opacity: 0; pointer-events: none; }
+  .loader-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: .18em; }
+  .loader-logo span { color: var(--gold); }
+  .loader-bar-wrap { width: 180px; height: 2px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+  .loader-bar { height: 100%; width: 0%; background: var(--gold); border-radius: 2px; transition: width .3s ease; }
+  .loader-text { font-size: .65rem; letter-spacing: .28em; text-transform: uppercase; color: rgba(248,244,238,.35); }
+
+  /* Below fold — translucent so the hero / reverse flight stays visible while you scroll */
+  .below-fold {
+    position: relative;
+    z-index: 1;
+    background: rgba(2, 8, 24, 0.82);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2rem; padding: 6rem 3rem; text-align: center;
+  }
+  .below-fold h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem); letter-spacing: .12em;
+  }
+  .below-fold p { max-width: 520px; font-size: .95rem; line-height: 1.95; color: rgba(248,244,238,.45); }
+  .cta {
+    display: inline-block;
+    text-decoration: none;
+    padding: .9rem 2.8rem; border: 1px solid var(--gold);
+    color: var(--gold); background: transparent;
+    font-family: 'Lato', sans-serif; font-size: .7rem;
+    letter-spacing: .38em; text-transform: uppercase;
+    cursor: pointer; transition: background .3s, color .3s; margin-top: .6rem;
+  }
+  .cta:hover { background: var(--gold); color: #020818; }
+
+  /* —— Site nav (hamburger) —— */
+  .site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    pointer-events: none;
+  }
+  .site-nav__toggle,
+  .site-nav__panel {
+    pointer-events: auto;
+  }
+  .site-nav__toggle {
+    position: absolute;
+    top: 1.15rem;
+    left: 1.15rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid rgba(248, 244, 238, 0.22);
+    background: rgba(2, 8, 24, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .site-nav__toggle:hover,
+  .site-nav.is-open .site-nav__toggle {
+    border-color: rgba(240, 168, 48, 0.55);
+    background: rgba(2, 8, 24, 0.78);
+  }
+  .site-nav__toggle:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+  .site-nav__bar {
+    display: block;
+    width: 1.15rem;
+    height: 1.5px;
+    background: var(--white);
+    transition: transform 0.28s ease, opacity 0.28s ease;
+  }
+  .site-nav.is-open .site-nav__bar:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .site-nav.is-open .site-nav__bar:nth-child(2) {
+    opacity: 0;
+  }
+  .site-nav.is-open .site-nav__bar:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  .site-nav__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 8, 24, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .site-nav.is-open .site-nav__backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .site-nav__panel {
+    position: absolute;
+    top: 4.35rem;
+    left: 1.15rem;
+    width: min(17.5rem, calc(100vw - 2.3rem));
+    padding: 1.35rem 1.25rem 1.4rem;
+    background: rgba(6, 12, 28, 0.94);
+    border: 1px solid rgba(248, 244, 238, 0.14);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform: translateY(-8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s;
+  }
+  .site-nav.is-open .site-nav__panel {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .site-nav__links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .site-nav__links a {
+    display: block;
+    padding: 0.55rem 0.2rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    color: rgba(248, 244, 238, 0.78);
+    border-bottom: 1px solid rgba(248, 244, 238, 0.08);
+    transition: color 0.2s, padding-left 0.2s;
+  }
+  .site-nav__links a:hover,
+  .site-nav__links a:focus-visible {
+    color: var(--gold);
+    padding-left: 0.35rem;
+  }
+  .site-nav__links a:focus-visible {
+    outline: none;
+  }
+
+  .site-nav__social {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 1.25rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid rgba(240, 168, 48, 0.22);
+  }
+  .site-nav__social-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1rem;
+    text-decoration: none;
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(240, 168, 48, 0.55);
+    background: transparent;
+    transition: background 0.25s, color 0.25s;
+  }
+  .site-nav__social-btn:hover,
+  .site-nav__social-btn:focus-visible {
+    background: var(--gold);
+    color: #020818;
+  }
+  .site-nav__social-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .site-nav__social-btn svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .site-nav__toggle {
+      top: 0.85rem;
+      left: 0.85rem;
+    }
+    .site-nav__panel {
+      top: 3.9rem;
+      left: 0.85rem;
+    }
+  }
+
+  /* —— Runway career timeline —— */
+  .runway-timeline {
+    --runway-w: clamp(56px, 12vw, 84px);
+    position: relative;
+    z-index: 1;
+    background: radial-gradient(ellipse 120% 80% at 50% 40%, #0f1828 0%, #060a10 55%, #04060c 100%);
+    padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem) clamp(5rem, 12vw, 8rem);
+    border-top: 1px solid rgba(240, 168, 48, 0.15);
+  }
+  .runway-timeline__head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 3.5rem;
+  }
+  .runway-timeline__head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    letter-spacing: 0.14em;
+    color: var(--white);
+  }
+  .runway-timeline__head p {
+    margin-top: 0.75rem;
+    font-size: 0.88rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(248, 244, 238, 0.38);
+  }
+
+  .runway-scale {
+    max-width: 920px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .runway-body {
+    position: relative;
+    margin: 0 auto;
+    max-width: 720px;
+    padding: 0 clamp(0.5rem, 3vw, 2rem);
+  }
+
+  /* Night runway stack: asphalt + edge lights + distance bands */
+  .runway-strip-volumes {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    width: var(--runway-w);
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 4px;
+  }
+
+  .runway-asphalt {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+    background:
+      repeating-linear-gradient(
+        -8deg,
+        transparent 0 6px,
+        rgba(0, 0, 0, 0.12) 6px 12px
+      ),
+      linear-gradient(180deg, #3d424a 0%, #2e3238 42%, #262a30 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 0 48px rgba(0, 0, 0, 0.55);
+  }
+
+  /* Inset dashed “shoulder” guides inside the lit edges */
+  .runway-asphalt::after {
+    content: '';
+    position: absolute;
+    inset: 14px 10px;
+    border-left: 1px dashed rgba(255, 255, 255, 0.14);
+    border-right: 1px dashed rgba(255, 255, 255, 0.14);
+    pointer-events: none;
+  }
+
+  /* Runway edge lights — warm white halation, spaced like inset bulbs */
+  .runway-edge-light {
+    position: absolute;
+    top: 10%;
+    bottom: 10%;
+    width: 5px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 22px,
+      rgba(255, 248, 220, 1) 22px,
+      rgba(255, 248, 220, 1) 24px,
+      transparent 24px,
+      transparent 46px
+    );
+    filter: drop-shadow(0 0 2px rgba(255, 235, 190, 0.95))
+      drop-shadow(0 0 8px rgba(255, 220, 160, 0.55))
+      drop-shadow(0 0 14px rgba(120, 180, 255, 0.22));
+    opacity: 0.97;
+  }
+  .runway-edge-light--port {
+    left: 0;
+  }
+  .runway-edge-light--stbd {
+    right: 0;
+  }
+
+  /* Double bars ~1000 ft / aiming-style bands */
+  .runway-distance-band {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 72%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+    pointer-events: none;
+  }
+  .runway-distance-band--north {
+    top: 17%;
+  }
+  .runway-distance-band--south {
+    bottom: 17%;
+  }
+  .runway-distance-band__bar {
+    height: 4px;
+    border-radius: 1px;
+    background: rgba(252, 252, 255, 0.94);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.35);
+  }
+
+  .runway-centerline {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    z-index: 1;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.95) 0 12px,
+      transparent 12px 26px
+    );
+    opacity: 0.88;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35))
+      drop-shadow(0 0 10px rgba(200, 220, 255, 0.15));
+    pointer-events: none;
+  }
+
+  .runway-exits {
+    position: relative;
+    z-index: 2;
+    list-style: none;
+  }
+
+  .runway-exit {
+    position: relative;
+    padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+    min-height: 5rem;
+  }
+
+  .runway-exit__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--runway-w) minmax(0, 1fr);
+    align-items: center;
+    gap: 0;
+    min-height: 3.5rem;
+  }
+
+  .runway-exit__spacer {
+    min-width: 0;
+  }
+
+  .runway-exit__runway-gap {
+    display: block;
+    min-height: 1.5rem;
+    pointer-events: none;
+  }
+
+  /* Taxiway branches from runway edge into the field (not drawn on the strip) */
+  .taxiway-branch {
+    position: absolute;
+    top: 50%;
+    width: clamp(72px, 22vw, 168px);
+    height: 28px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .runway-exit--right .taxiway-branch {
+    left: calc(50% + var(--runway-w) * 0.5 - 1px);
+    transform: translateY(-50%) skewY(-22deg);
+    transform-origin: left center;
+  }
+  .runway-exit--left .taxiway-branch {
+    right: calc(50% + var(--runway-w) * 0.5 - 1px);
+    transform: translateY(-50%) skewY(22deg);
+    transform-origin: right center;
+  }
+
+  .taxiway-branch__pavement {
+    position: absolute;
+    inset: 0;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #3d4f58 0%, #2a363e 50%, #1e282f 100%);
+    border: 1px solid rgba(90, 190, 210, 0.35);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 0 22px rgba(50, 160, 200, 0.28),
+      0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  .taxiway-branch__edge {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: 4px;
+    border-radius: 2px;
+    z-index: 2;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 7px,
+      rgba(110, 245, 228, 0.98) 7px,
+      rgba(110, 245, 228, 0.98) 9px,
+      transparent 9px,
+      transparent 18px
+    );
+    filter: drop-shadow(0 0 4px rgba(80, 230, 220, 0.95))
+      drop-shadow(0 0 12px rgba(60, 180, 255, 0.55));
+  }
+  .taxiway-branch--right .taxiway-branch__edge--runway {
+    left: 0;
+  }
+  .taxiway-branch--right .taxiway-branch__edge--field {
+    right: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 9px,
+      rgba(150, 220, 255, 0.95) 9px,
+      rgba(150, 220, 255, 0.95) 11px,
+      transparent 11px,
+      transparent 22px
+    );
+    filter: drop-shadow(0 0 4px rgba(140, 210, 255, 0.9))
+      drop-shadow(0 0 10px rgba(100, 170, 255, 0.45));
+  }
+  .taxiway-branch--left .taxiway-branch__edge--runway {
+    right: 0;
+  }
+  .taxiway-branch--left .taxiway-branch__edge--field {
+    left: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 9px,
+      rgba(150, 220, 255, 0.95) 9px,
+      rgba(150, 220, 255, 0.95) 11px,
+      transparent 11px,
+      transparent 22px
+    );
+    filter: drop-shadow(0 0 4px rgba(140, 210, 255, 0.9))
+      drop-shadow(0 0 10px rgba(100, 170, 255, 0.45));
+  }
+
+  .taxiway-branch__glowline {
+    position: absolute;
+    inset: 5px 11px;
+    z-index: 1;
+    border-radius: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 12px,
+      rgba(200, 255, 130, 0.55) 12px,
+      rgba(200, 255, 130, 0.55) 14px,
+      transparent 14px,
+      transparent 28px
+    );
+    opacity: 0.55;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    filter: blur(0.4px);
+    box-shadow: 0 0 10px rgba(180, 255, 100, 0.25);
+  }
+
+  .runway-card {
+    position: relative;
+    z-index: 4;
+    max-width: 320px;
+    padding: 1.25rem 1.35rem;
+    background: rgba(18, 24, 34, 0.94);
+    border: 1px solid rgba(240, 168, 48, 0.22);
+    border-radius: 4px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  }
+  .runway-card time {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .runway-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.45rem;
+    letter-spacing: 0.06em;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--white);
+  }
+  .runway-card .runway-card__co {
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(248, 244, 238, 0.45);
+  }
+  .runway-card .runway-card__detail {
+    margin-top: 0.75rem;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: rgba(248, 244, 238, 0.55);
+  }
+
+  .runway-exit--right .runway-card {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: start;
+    align-self: center;
+    margin-left: 0.65rem;
+  }
+  .runway-exit--left .runway-card {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    margin-right: 0.65rem;
+    text-align: right;
+  }
+  /* Keep bullets / body copy LTR-left even when title block is right-aligned */
+  .runway-exit--left .runway-card .runway-card__detail {
+    text-align: left;
+  }
+
+  @media (max-width: 700px) {
+    .runway-exit {
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 0;
+    }
+    .runway-exit__row {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 0;
+      order: 2;
+    }
+    .runway-exit .taxiway-branch {
+      order: 1;
+      position: relative;
+      left: auto !important;
+      right: auto !important;
+      top: auto;
+      transform: skewX(-14deg) !important;
+      width: min(220px, 70%) !important;
+      height: 26px !important;
+      margin: 0 auto 0.85rem;
+      transform-origin: center center;
+    }
+    .runway-exit--left .taxiway-branch {
+      transform: skewX(14deg) !important;
+    }
+    .runway-exit__spacer {
+      display: none;
+    }
+    .runway-exit__runway-gap {
+      display: none;
+    }
+    .runway-exit--right .runway-card,
+    .runway-exit--left .runway-card {
+      max-width: none;
+      margin: 0 !important;
+      text-align: left !important;
+    }
+    .runway-strip-volumes,
+    .runway-centerline {
+      display: none;
+    }
+  }
+
+  /* —— Projects —— */
+  .projects-section {
+    position: relative;
+    z-index: 1;
+    background: radial-gradient(ellipse 110% 70% at 50% 0%, #101a2c 0%, #060a12 50%, #04060c 100%);
+    padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 3rem) clamp(5rem, 12vw, 8rem);
+    border-top: 1px solid rgba(240, 168, 48, 0.15);
+  }
+  .projects-section__head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 3rem;
+  }
+  .projects-section__head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    letter-spacing: 0.14em;
+    color: var(--white);
+  }
+  .projects-list {
+    list-style: none;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .project-item {
+    padding: 1.75rem 0 1.9rem;
+    border-bottom: 1px solid rgba(248, 244, 238, 0.1);
+  }
+  .project-item:first-child {
+    border-top: 1px solid rgba(248, 244, 238, 0.1);
+  }
+  .project-item__index {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.55rem;
+  }
+  .project-item h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    letter-spacing: 0.08em;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 0.85rem;
+    line-height: 1.15;
+  }
+  .project-item__detail {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: rgba(248, 244, 238, 0.52);
+    margin-bottom: 1.1rem;
+  }
+  .project-item__link {
+    display: inline-block;
+    text-decoration: none;
+    padding: 0.65rem 1.4rem;
+    border: 1px solid rgba(240, 168, 48, 0.55);
+    color: var(--gold);
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    transition: background 0.25s, color 0.25s;
+  }
+  .project-item__link:hover,
+  .project-item__link:focus-visible {
+    background: var(--gold);
+    color: #020818;
+  }
+</style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loadingScreen">
-        <div class="loading-container">
-            <p>Booting up...</p>
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
+
+<div id="loader">
+  <div class="loader-logo">AIR <span>WALLMAN</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+  <div class="loader-text" id="loaderText">Taxiing</div>
+</div>
+
+<nav class="site-nav" id="siteNav" aria-label="Primary">
+  <button
+    type="button"
+    class="site-nav__toggle"
+    id="siteNavToggle"
+    aria-expanded="false"
+    aria-controls="siteNavPanel"
+    aria-label="Open menu"
+  >
+    <span class="site-nav__bar" aria-hidden="true"></span>
+    <span class="site-nav__bar" aria-hidden="true"></span>
+    <span class="site-nav__bar" aria-hidden="true"></span>
+  </button>
+  <div class="site-nav__backdrop" id="siteNavBackdrop" hidden></div>
+  <div class="site-nav__panel" id="siteNavPanel" role="dialog" aria-label="Site menu" hidden>
+    <ul class="site-nav__links">
+      <li><a href="#home" data-nav-target="home">Home</a></li>
+      <li><a href="#landing" data-nav-target="landing">Landing</a></li>
+      <li><a href="#experience" data-nav-target="experience">Experience</a></li>
+      <li><a href="#projects" data-nav-target="projects">Projects</a></li>
+    </ul>
+    <div class="site-nav__social">
+      <a
+        class="site-nav__social-btn"
+        href="https://github.com/ryanwallman"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.486 2 12.021c0 4.425 2.865 8.18 6.839 9.504.5.093.682-.217.682-.483 0-.237-.009-.866-.013-1.7-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.621.069-.608.069-.608 1.004.071 1.532 1.033 1.532 1.033.892 1.53 2.341 1.088 2.91.833.091-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.952 0-1.093.39-1.988 1.029-2.688-.103-.254-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.56 9.56 0 0 1 2.504.338c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.944.359.31.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.025 10.025 0 0 0 22 12.021C22 6.486 17.523 2 12 2z"/>
+        </svg>
+        GitHub
+      </a>
+      <a
+        class="site-nav__social-btn"
+        href="https://www.linkedin.com/in/rwallman"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="scroll-driver" id="home">
+  <div class="scene" id="scene">
+    <div class="sky-bg" id="skyBg"></div>
+    <div class="stars-layer" id="starsLayer"></div>
+    <canvas id="three-canvas"></canvas>
+    <div class="horizon-glow" id="horizonGlow"></div>
+    <div class="speed-layer" id="speedLayer"></div>
+    <div class="contrail" id="contrail"></div>
+    <div class="hud">
+      <div class="hud-top" id="hudTop">
+        <div class="flight-tag">
+          <div>Flight RW 001</div>
+          <div>New York → Nowhere</div>
+          <div>Departing 00:00</div>
         </div>
+      </div>
+      <div class="hud-mid" id="hudMid">
+        <div class="hero-title">Ryan<br>Wallman</div>
+        <div class="hero-sub">Software Engineer. Technology Consultant.</div>
+      </div>
+      <div class="hud-bot" id="hudBot">
+        <div class="scroll-hint"><div class="hint-line"></div>Scroll to launch</div>
+        <div class="alt-meter"><span class="alt-num" id="altNum">000</span>Altitude ft</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="below-fold" id="landing">
+  <h2>Clear for landing</h2>
+  <a class="cta" href="#experience">Taxi to experience</a>
+</div>
+
+<section class="runway-timeline" id="experience" aria-labelledby="runway-experience-title">
+  <header class="runway-timeline__head">
+    <h2 id="runway-experience-title">Experience</h2>
+  </header>
+
+  <div class="runway-scale">
+    <div class="runway-body">
+      <div class="runway-strip-volumes" aria-hidden="true">
+        <div class="runway-asphalt"></div>
+        <div class="runway-edge-light runway-edge-light--port"></div>
+        <div class="runway-edge-light runway-edge-light--stbd"></div>
+        <div class="runway-distance-band runway-distance-band--north">
+          <span class="runway-distance-band__bar"></span>
+          <span class="runway-distance-band__bar"></span>
+        </div>
+        <div class="runway-distance-band runway-distance-band--south">
+          <span class="runway-distance-band__bar"></span>
+          <span class="runway-distance-band__bar"></span>
+        </div>
+      </div>
+      <div class="runway-centerline" aria-hidden="true"></div>
+      <ul class="runway-exits">
+        <li class="runway-exit runway-exit--right">
+          <div class="runway-exit__row">
+            <span class="runway-exit__spacer" aria-hidden="true"></span>
+            <span class="runway-exit__runway-gap" aria-hidden="true"></span>
+            <article class="runway-card">
+              <time datetime="2023">November 2025 — Present</time>
+              <h3>Technology Consultant</h3>
+              <p class="runway-card__co">EY</p>
+              <p class="runway-card__detail"></p>
+            </article>
+          </div>
+          <div class="taxiway-branch taxiway-branch--right" aria-hidden="true">
+            <span class="taxiway-branch__edge taxiway-branch__edge--runway"></span>
+            <span class="taxiway-branch__pavement"></span>
+            <span class="taxiway-branch__glowline"></span>
+            <span class="taxiway-branch__edge taxiway-branch__edge--field"></span>
+          </div>
+        </li>
+        <li class="runway-exit runway-exit--left">
+          <div class="runway-exit__row">
+            <article class="runway-card">
+              <time datetime="2020">June 2024 - August 2024</time>
+              <h3>Software Engineering Intern</h3>
+              <p class="runway-card__co">MarketAxess</p>
+              <p class="runway-card__detail">
+                • Implemented RESTful API endpoints to fetch/send data through a topic/parameter-specific RPC using Sonic<br>
+                • Integrated SQL stored procedures to join, retrieve, and display essential information using AG-Grid<br>
+                • Collaborated with cross-functional teams to deliver product proposals capable of generating $20M+ in revenue
+            </p>
+            </article>
+            <span class="runway-exit__runway-gap" aria-hidden="true"></span>
+            <span class="runway-exit__spacer" aria-hidden="true"></span>
+          </div>
+          <div class="taxiway-branch taxiway-branch--left" aria-hidden="true">
+            <span class="taxiway-branch__edge taxiway-branch__edge--field"></span>
+            <span class="taxiway-branch__pavement"></span>
+            <span class="taxiway-branch__glowline"></span>
+            <span class="taxiway-branch__edge taxiway-branch__edge--runway"></span>
+          </div>
+        </li>
+        <li class="runway-exit runway-exit--right">
+          <div class="runway-exit__row">
+            <span class="runway-exit__spacer" aria-hidden="true"></span>
+            <span class="runway-exit__runway-gap" aria-hidden="true"></span>
+            <article class="runway-card">
+              <time datetime="2017">June 2023 - August 2023</time>
+              <h3>Data Engineering Intern</h3>
+              <p class="runway-card__co">Cyber 2.0</p>
+              <p class="runway-card__detail">
+                • Developed an application to compress specific data fields from SQL tables at varying intervals using threads in Python<br>
+                • Built a script to merge a conditional number of databases, avoiding duplicates, using C# and SQL<br>
+                • Enhanced prompt engineering skills by engaging in a range of assigned tasks
+              </p>
+            </article>
+          </div>
+          <div class="taxiway-branch taxiway-branch--right" aria-hidden="true">
+            <span class="taxiway-branch__edge taxiway-branch__edge--runway"></span>
+            <span class="taxiway-branch__pavement"></span>
+            <span class="taxiway-branch__glowline"></span>
+            <span class="taxiway-branch__edge taxiway-branch__edge--field"></span>
+          </div>
+        </li>
+        <li class="runway-exit runway-exit--left">
+          <div class="runway-exit__row">
+            <article class="runway-card">
+              <time datetime="2015">January 2023</time>
+              <h3>Computer Technician Intern</h3>
+              <p class="runway-card__co">Titan Technologies</p>
+              <p class="runway-card__detail">
+                • Assisted clients with software and hardware requests using RMM software and KVM switches respectively<br>
+                • Initiated the switch to an updated server system for a client by upgrading hardware and eliminating unnecessary data
+              </p>
+            </article>
+            <span class="runway-exit__runway-gap" aria-hidden="true"></span>
+            <span class="runway-exit__spacer" aria-hidden="true"></span>
+          </div>
+          <div class="taxiway-branch taxiway-branch--left" aria-hidden="true">
+            <span class="taxiway-branch__edge taxiway-branch__edge--field"></span>
+            <span class="taxiway-branch__pavement"></span>
+            <span class="taxiway-branch__glowline"></span>
+            <span class="taxiway-branch__edge taxiway-branch__edge--runway"></span>
+          </div>
+        </li>
+      </ul>
     </div>
 
-    <!-- Retro Computer -->
-    <div class="computer">
+  </div>
+</section>
 
-        <div class="power-button on" id="powerButton"></div>
+<section class="projects-section" id="projects" aria-labelledby="projects-title">
+  <header class="projects-section__head">
+    <h2 id="projects-title">Projects</h2>
+  </header>
+  <ul class="projects-list">
+    <li class="project-item">
+      <span class="project-item__index">01</span>
+      <h3>Geography Guesser</h3>
+      <p class="project-item__detail">
+        Pick a continent, get a major city, and drop a pin where you think it is. Distance scored each round.
+      </p>
+      <a class="project-item__link" href="geography-guesser.html">Play the game</a>
+    </li>
+  </ul>
+</section>
 
-        <div class="monitor">
-            <div class="screen" id="screen">
-                <div class="terminal" id="terminal">
-                    <p class="terminal-text">Hi there,</p>
-                    <br>
-                    <p class="terminal-text name">I'm Ryan W</p>
-                    <br>
-                    <p class="terminal-text"><li>Software Engineer</li></p>
-                    <p class="terminal-text"><li>Technology Consultant</li></p>
-                    <br>
-                    <p class="terminal-text">Welcome to RW Linux 1.0</p>
-                    <p class="terminal-text">→→Scroll down for keyboard & menu options</p>
-                    <p class="terminal-text">→→Type 'help' to see available commands</p>
-                    <br>
-                    <div id="output"></div>
-                    <div class="input-line">
-                        <span>C:\></span>
-                        <input type="text" id="commandInput" autofocus>
-                    </div>
-                </div>
-            </div>
-        </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// Stars
+const starsLayer = document.getElementById('starsLayer');
+for (let i = 0; i < 220; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const sz = Math.random() * 2.4 + 0.4;
+  s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*78}%;opacity:${0.35+Math.random()*0.65};`;
+  starsLayer.appendChild(s);
+}
 
-        <!-- Keyboard -->
-        <div class="keyboard">
-            <div class="keys">
-                <div class="key">q</div><div class="key">w</div><div class="key">e</div>
-                <div class="key">r</div><div class="key">t</div><div class="key">y</div>
-                <div class="key">u</div><div class="key">i</div><div class="key">o</div>
-                <div class="key">p</div>
-                <div class="key delete">delete</div>
-            </div>
-            <div class="keys">
-                <div class="key">a</div><div class="key">s</div><div class="key">d</div>
-                <div class="key">f</div><div class="key">g</div><div class="key">h</div>
-                <div class="key">j</div><div class="key">k</div><div class="key">l</div>
-                <div class="key enter">enter</div>
-            </div>
-            <div class="keys">
-                <div class="key">z</div><div class="key">x</div><div class="key">c</div>
-                <div class="key">v</div><div class="key">b</div><div class="key">n</div>
-                <div class="key">m</div>
-                <div class="key shift">shift</div>
-            </div>
-        </div>
-    </div>
+// Speed streaks
+const speedLayer = document.getElementById('speedLayer');
+for (let i = 0; i < 28; i++) {
+  const l = document.createElement('div');
+  l.className = 'speed-streak';
+  l.style.cssText = `top:${8 + Math.random() * 84}%;left:0;right:0;`;
+  speedLayer.appendChild(l);
+}
 
-    <!-- Navbar (Initially Hidden) -->
-    <div class="navbar" id="navbar">
-        <div class="nav-container">
-            <!-- Hamburger Menu -->
-            <div class="nav-item" id="hamburger">&#9776;</div>
+// Three.js
+const canvas = document.getElementById('three-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.4;
 
-            <!-- External Links -->
-            <a href="https://www.linkedin.com/in/rwallman/" target="_blank" class="nav-item">
-                <img src="./images/linkedin.png" alt="LinkedIn">
-            </a>
-            <a href="https://github.com/ryanwallman/" target="_blank" class="nav-item github">
-                <img src="./images/github.png" alt="GitHub">
-            </a>
-        </div>
+const scene3 = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 2000);
+camera.position.set(0, 2.5, 22);
+camera.lookAt(0, 0, 0);
 
-        <!-- Submenu (Hidden by Default) -->
-        <ul id="submenu" class="submenu">
-            <a href="./pages/about.html" target="_blank" class="sub-nav-item sub">
-                About
-            </a>
-            <a href="./pages/experience.html" target="_blank" class="sub-nav-item sub">
-                Experience
-            </a>
-            <a href="./pages/projects.html" target="_blank" class="sub-nav-item sub">
-                Projects
-            </a>
-            <a href="./pages/skills.html" target="_blank" class="sub-nav-item">
-                Skills
-            </a>
-        </ul>
-    </div>
+const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+scene3.add(ambient);
+const sun = new THREE.DirectionalLight(0xffd8a0, 2.5);
+sun.position.set(8, 14, 10);
+scene3.add(sun);
+const fill = new THREE.DirectionalLight(0x4488cc, 0.55);
+fill.position.set(-10, 4, 6);
+scene3.add(fill);
+const rim = new THREE.DirectionalLight(0xff9944, 0.5);
+rim.position.set(0, -5, -8);
+scene3.add(rim);
 
-    <script src="script.js"></script>
+// Reused for “never put the camera inside the jet” clamp (world bounds vs camera)
+const planeCamClamp = {
+  box: new THREE.Box3(),
+  sphere: new THREE.Sphere(),
+  camWorld: new THREE.Vector3(),
+  dir: new THREE.Vector3(),
+};
+
+let airplane = null;
+let modelLoaded = false;
+
+const loaderBar = document.getElementById('loaderBar');
+const loaderText = document.getElementById('loaderText');
+const loaderEl = document.getElementById('loader');
+
+function setProgress(pct, txt) {
+  loaderBar.style.width = pct + '%';
+  if (txt) loaderText.textContent = txt;
+}
+
+function onModelReady() {
+  setProgress(100, 'Cleared for Takeoff');
+  setTimeout(() => {
+    loaderEl.classList.add('fade');
+    setTimeout(() => loaderEl.style.display = 'none', 900);
+    document.getElementById('hudTop').classList.add('show');
+    document.getElementById('hudMid').classList.add('show');
+    document.getElementById('hudBot').classList.add('show');
+    animate();
+  }, 500);
+}
+
+// Load GLTFLoader then model
+const s1 = document.createElement('script');
+s1.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+s1.onload = () => {
+  setProgress(20, 'Taxiing');
+  const loader = new THREE.GLTFLoader();
+  // A319 is compact and well-shaped for this animation
+  loader.load(
+    'https://yellow-digital.github.io/airplanes/models/B747.glb',
+    (gltf) => {
+      setProgress(88, 'Cleared for Takeoff');
+      airplane = gltf.scene;
+
+      // Normalize size
+      const box = new THREE.Box3().setFromObject(airplane);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const sc = 14 / maxDim;
+      airplane.scale.setScalar(sc);
+      airplane.position.sub(center.multiplyScalar(sc));
+      airplane.position.y += 0.3;
+      airplane.userData.baseScale = sc;
+
+      // Side profile for fly-in (nose toward +X). This model is 180° off the
+      // common “+Z forward” assumption, so use +90° base instead of -90°.
+      airplane.rotation.y = Math.PI / 2;
+
+      airplane.traverse(c => {
+        if (c.isMesh) {
+          if (c.material) {
+            c.material.envMapIntensity = 1.3;
+          }
+          c.castShadow = true;
+        }
+      });
+
+      scene3.add(airplane);
+      modelLoaded = true;
+      // Keep 3D pose in sync with scroll math from the first frame (otherwise the
+      // model sits at the loader pose until scroll, then snaps off-screen).
+      applySceneFromProgress();
+      onModelReady();
+    },
+    (prog) => {
+      if (prog.total) {
+        const p = 20 + (prog.loaded / prog.total) * 65;
+        setProgress(p, p >= 50 ? 'Cleared for Takeoff' : 'Taxiing');
+      }
+    },
+    (err) => {
+      console.error(err);
+      // Fallback: just show the scene empty
+      modelLoaded = true;
+      applySceneFromProgress();
+      onModelReady();
+    }
+  );
+};
+document.head.appendChild(s1);
+
+// Flight (wheel / touch) then normal page scroll after unlock
+const skyBg = document.getElementById('skyBg');
+const horizonGlow = document.getElementById('horizonGlow');
+const contrail = document.getElementById('contrail');
+const altNum = document.getElementById('altNum');
+const hudMid = document.getElementById('hudMid');
+const belowFoldEl = document.querySelector('.below-fold');
+
+let scrollProgress = 0;
+let flightLocked = true;
+let flightProgress = 0;
+let touchLastY = 0;
+/** Deepest scroll since unlock — must pass getWebpageEnterScrollY() before undo-at-top is allowed */
+let peakScrollSinceUnlock = 0;
+/** 1 = end-of-flight at document top; wheel/touch up decreases toward 0 (slow undo) */
+let flightUndoProgress = 1;
+let undoTouchLastY = 0;
+
+const WHEEL_TO_FLIGHT = 0.00032;
+const TOUCH_TO_FLIGHT = 0.0018;
+const UNDO_WHEEL_TO_FLIGHT = 0.00009;
+const UNDO_TOUCH_TO_FLIGHT = 0.00055;
+/** Wheel “down” during undo snaps to full cruise so doc scroll unlocks once you’re back at 35k ft */
+const UNDO_SNAP_TO_FULL_CRUISE = 0.999;
+/** Require full progress so climb (and HUD alt) reach their p = 1 pose before unlock */
+const FLIGHT_COMPLETE = 1;
+const RELOCK_SCROLL_Y = 10;
+const RELOCK_P = 0.045;
+
+function clamp(v, a, b) { return Math.min(Math.max(v, a), b); }
+function smoothstep(edge0, edge1, x) {
+  const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+  return t * t * (3 - 2 * t);
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+function eIO(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+function eIn3(t) { return t*t*t; }
+
+function snapUndoProgressToFullCruise() {
+  if (flightLocked) return;
+  if (flightUndoProgress >= UNDO_SNAP_TO_FULL_CRUISE) flightUndoProgress = 1;
+}
+
+function syncDocScrollLock() {
+  const lock =
+    flightLocked ||
+    (!flightLocked && flightUndoProgress < 1);
+  document.documentElement.classList.toggle('doc-scroll-locked', lock);
+}
+
+syncDocScrollLock();
+
+/** First scrollY where the below-fold page can appear (same threshold as “scrolled down into the webpage”). */
+function getWebpageEnterScrollY() {
+  if (!belowFoldEl) return Math.max(1, window.innerHeight * 0.4);
+  return Math.max(1, belowFoldEl.offsetTop - window.innerHeight);
+}
+
+function readProgress() {
+  if (flightLocked) return clamp(flightProgress, 0, 1);
+  const enterY = getWebpageEnterScrollY();
+  if (peakScrollSinceUnlock < enterY) return 1;
+  if (window.scrollY > 0.5) return 1;
+  return clamp(flightUndoProgress, 0, 1);
+}
+
+function applySceneFromProgress() {
+  scrollProgress = readProgress();
+  updateScene();
+}
+
+function completeFlight() {
+  if (!flightLocked) return;
+  flightLocked = false;
+  flightProgress = 1;
+  peakScrollSinceUnlock = 0;
+  flightUndoProgress = 1;
+  syncDocScrollLock();
+  applySceneFromProgress();
+}
+
+function maybeRelockFlightAtTop() {
+  if (flightLocked) return;
+  const enterY = getWebpageEnterScrollY();
+  if (peakScrollSinceUnlock < enterY) return;
+  if (window.scrollY > RELOCK_SCROLL_Y) return;
+  if (flightUndoProgress > RELOCK_P) return;
+  peakScrollSinceUnlock = 0;
+  flightUndoProgress = 1;
+  flightLocked = true;
+  flightProgress = 0;
+  syncDocScrollLock();
+  window.scrollTo(0, 0);
+}
+
+function onPageScroll() {
+  if (!flightLocked) {
+    peakScrollSinceUnlock = Math.max(peakScrollSinceUnlock, window.scrollY);
+    if (window.scrollY > 0.5) {
+      flightUndoProgress = 1;
+      syncDocScrollLock();
+    }
+    maybeRelockFlightAtTop();
+  }
+  applySceneFromProgress();
+}
+
+window.addEventListener('scroll', onPageScroll, { passive: true });
+
+function onWindowWheel(e) {
+  if (flightLocked) {
+    e.preventDefault();
+    flightProgress = clamp(flightProgress + e.deltaY * WHEEL_TO_FLIGHT, 0, 1);
+    if (flightProgress >= FLIGHT_COMPLETE) completeFlight();
+    else applySceneFromProgress();
+    return;
+  }
+  const enterY = getWebpageEnterScrollY();
+  if (peakScrollSinceUnlock < enterY) return;
+  if (window.scrollY > 0.5) return;
+  snapUndoProgressToFullCruise();
+  // Full cruise at top: wheel down = native page scroll into below-fold; wheel up = start undo
+  if (flightUndoProgress >= 1) {
+    if (e.deltaY >= 0) return;
+    e.preventDefault();
+    flightUndoProgress = clamp(flightUndoProgress + e.deltaY * UNDO_WHEEL_TO_FLIGHT, 0, 1);
+    snapUndoProgressToFullCruise();
+  } else {
+    e.preventDefault();
+    flightUndoProgress = clamp(flightUndoProgress + e.deltaY * UNDO_WHEEL_TO_FLIGHT, 0, 1);
+    snapUndoProgressToFullCruise();
+  }
+  syncDocScrollLock();
+  applySceneFromProgress();
+  if (flightUndoProgress <= RELOCK_P) maybeRelockFlightAtTop();
+}
+
+window.addEventListener('wheel', onWindowWheel, { passive: false });
+
+window.addEventListener('touchstart', (e) => {
+  if (flightLocked) {
+    touchLastY = e.touches[0].clientY;
+    return;
+  }
+  if (window.scrollY <= 0.5 && peakScrollSinceUnlock >= getWebpageEnterScrollY()) {
+    undoTouchLastY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+  if (flightLocked) {
+    e.preventDefault();
+    const y = e.touches[0].clientY;
+    const dy = touchLastY - y;
+    touchLastY = y;
+    flightProgress = clamp(flightProgress + dy * TOUCH_TO_FLIGHT, 0, 1);
+    if (flightProgress >= FLIGHT_COMPLETE) completeFlight();
+    else applySceneFromProgress();
+    return;
+  }
+  if (peakScrollSinceUnlock < getWebpageEnterScrollY()) return;
+  if (window.scrollY > 0.5) return;
+  const y = e.touches[0].clientY;
+  const dy = undoTouchLastY - y;
+  undoTouchLastY = y;
+  if (dy === 0) return;
+  e.preventDefault();
+  flightUndoProgress = clamp(flightUndoProgress - dy * UNDO_TOUCH_TO_FLIGHT, 0, 1);
+  snapUndoProgressToFullCruise();
+  syncDocScrollLock();
+  applySceneFromProgress();
+  if (flightUndoProgress <= RELOCK_P) maybeRelockFlightAtTop();
+}, { passive: false });
+
+/* Site nav */
+(function initSiteNav() {
+  const nav = document.getElementById('siteNav');
+  const toggle = document.getElementById('siteNavToggle');
+  const panel = document.getElementById('siteNavPanel');
+  const backdrop = document.getElementById('siteNavBackdrop');
+  if (!nav || !toggle || !panel || !backdrop) return;
+
+  function setNavOpen(open) {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    panel.hidden = !open;
+    backdrop.hidden = !open;
+  }
+
+  function closeNav() {
+    setNavOpen(false);
+  }
+
+  function unlockForPageScroll() {
+    if (flightLocked) completeFlight();
+    else {
+      flightUndoProgress = 1;
+      syncDocScrollLock();
+      applySceneFromProgress();
+    }
+    peakScrollSinceUnlock = Math.max(peakScrollSinceUnlock, getWebpageEnterScrollY());
+  }
+
+  function goToSection(id) {
+    closeNav();
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    if (id === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    unlockForPageScroll();
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  toggle.addEventListener('click', () => {
+    setNavOpen(!nav.classList.contains('is-open'));
+  });
+  backdrop.addEventListener('click', closeNav);
+
+  panel.querySelectorAll('[data-nav-target]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      goToSection(link.getAttribute('data-nav-target'));
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) closeNav();
+  });
+
+  const experienceCta = document.querySelector('.below-fold .cta[href="#experience"]');
+  if (experienceCta) {
+    experienceCta.addEventListener('click', (e) => {
+      e.preventDefault();
+      goToSection('experience');
+    });
+  }
+})();
+
+function updateScene() {
+  const p = scrollProgress;
+  // Three beats: fly in -> extra-wide turn -> approach
+  const pFly = clamp(p / 0.50, 0, 1);
+  const pTurn = clamp((p - 0.16) / 0.56, 0, 1);
+  const pApproach = clamp((p - 0.66) / 0.34, 0, 1);
+
+  if (airplane && modelLoaded) {
+    const baseSc = airplane.userData.baseScale || airplane.scale.x || 1;
+
+    // 1) Side profile, nose +X: slide from left toward center
+    const xPos = lerp(-22, 0, eIO(pFly)) * (1 - 0.92 * eIn3(pApproach));
+    const zCruise = lerp(-1.2, 0.2, eIO(pFly));
+    // Drift toward camera (+Z) through the bank/yaw turn, then final rush in approach
+    const zTurnIn = lerp(0, 5.4, eIO(pTurn));
+    const zPos = zCruise + zTurnIn + lerp(0, 11.5, eIn3(pApproach));
+    // Vertical climb tracks HUD altitude shape (u = eIO(p)): very gentle below ~25k ft, then steepens for exit
+    const u = eIO(p);
+    const uKnee = 25000 / 35000;
+    const earlyClimb = 0.1 * Math.pow(smoothstep(0, uKnee, u), 2.5);
+    const v = clamp((u - uKnee) / (1 - uKnee), 0, 1);
+    const lateClimb = 0.9 * (0.22 * eIn3(v) + 0.78 * Math.pow(v, 2.85));
+    const climbCurve = Math.min(1, earlyClimb + lateClimb);
+    const climbWorldY = climbCurve * 44;
+    const pPostLevel = clamp((p - 0.64) / (1 - 0.64), 0, 1);
+    const climbEase = eIn3(pPostLevel);
+    const yApproach = lerp(0, -0.32, eIn3(pApproach)) * (1 - 0.9 * climbCurve);
+    const yPos = lerp(-0.6, 0.35, eIO(pFly)) + yApproach + climbWorldY;
+
+    // 2) Yaw: +90° (side, nose +X) -> 0° (opposite quarter-turn into head-on vs π)
+    const yaw = lerp(Math.PI / 2, 0, eIO(pTurn));
+    // Nose-up in the bank; after wings level, extra nose-up + climb so the jet reads as flying off the top
+    const pitchUpTurnRad = 20 * (Math.PI / 180);
+    const apprPitch = eIn3(pApproach);
+    const pitchTurnLift = -pitchUpTurnRad * eIO(pTurn) * (1 - apprPitch);
+    const pitchCruise = lerp(0.04, 0.12, eIO(pTurn));
+    const climbBlend = Math.min(1, climbCurve * 1.08);
+    const pitchDepartUp =
+      -0.42 * climbBlend - 0.1 * eIn3(pApproach) * climbBlend;
+    const pitch = pitchCruise * (1 - apprPitch) + 0.02 * apprPitch + pitchTurnLift + pitchDepartUp;
+    // Right wing dips mid-turn (steeper bank), wings level when turn completes.
+    const rollTurnBank = 0.44 * Math.sin(eIO(pTurn) * Math.PI);
+    const roll =
+      lerp(0, -0.08, eIO(pFly)) * (1 - eIO(pTurn)) +
+      rollTurnBank;
+
+    // From first frame of the bank/yaw (p ≈ 0.16): slow, gradual growth (power ease-in) through climb-out
+    const growStart = 0.16;
+    const growT = clamp((p - growStart) / (1 - growStart), 0, 1);
+    const growEase = Math.pow(growT, 3.15);
+    const scaleMul = lerp(1, 5.85, growEase) * lerp(1, 1.11, climbEase);
+    airplane.scale.setScalar(baseSc * scaleMul);
+
+    airplane.position.set(xPos, yPos, zPos);
+    airplane.rotation.set(pitch, yaw, roll);
+
+    // Frustum safety while banking; weight goes smoothly to 0 so there is no snap near ~31k ft (p ≈ 0.76)
+    const margin = 2.85;
+    const camClampW = 1 - smoothstep(0.62, 0.84, p);
+    const clampClimbEase = climbCurve;
+    for (let pass = 0; pass < 2; pass++) {
+      airplane.updateMatrixWorld(true);
+      planeCamClamp.box.setFromObject(airplane);
+      planeCamClamp.box.getBoundingSphere(planeCamClamp.sphere);
+      camera.getWorldPosition(planeCamClamp.camWorld);
+      const sp = planeCamClamp.sphere;
+      const d = sp.center.distanceTo(planeCamClamp.camWorld);
+      const minD = sp.radius + margin;
+      if (d >= minD) break;
+      const push = (minD - d) * (1 - clampClimbEase * 0.88) * camClampW;
+      if (push < 1e-6) break;
+      planeCamClamp.dir.copy(sp.center).sub(planeCamClamp.camWorld);
+      planeCamClamp.dir.y = 0;
+      if (planeCamClamp.dir.lengthSq() < 1e-10) planeCamClamp.dir.set(0, 0, -1);
+      else planeCamClamp.dir.normalize();
+      airplane.position.addScaledVector(planeCamClamp.dir, push);
+    }
+  }
+
+  const skyLift = Math.max(eIO(pTurn), eIn3(pApproach));
+  const skyTopB = Math.round(lerp(24, 40, skyLift));
+  skyBg.style.background = `linear-gradient(to bottom, #020${skyTopB.toString(16).padStart(2,'0')} 0%, #0a1a3d 55%, #182f5a 80%, #8b4a1a 100%)`;
+
+  const glowA = lerp(0, 0.72, eIO(pTurn + pApproach * 0.35));
+  horizonGlow.style.background = `radial-gradient(ellipse at center bottom, rgba(232,120,20,${glowA}) 0%, transparent 65%)`;
+
+  // One smooth hide (no cubic × approach product) — avoids 1px streaks flickering as “horizontal lines” ~30–35k ft
+  const speedShow = eIO(pApproach) * (1 - smoothstep(0.74, 0.9, p));
+  speedLayer.style.opacity = String(speedShow);
+  speedLayer.style.visibility = speedShow < 0.03 ? 'hidden' : 'visible';
+
+  const altFloat = lerp(0, 35000, eIO(p));
+  const alt = Math.round(altFloat);
+  altNum.textContent = alt >= 1000
+    ? Math.floor(alt/1000) + ',' + String(alt % 1000).padStart(3,'0')
+    : String(alt).padStart(3,'0');
+
+  hudMid.style.opacity = lerp(1, 0, clamp(pApproach * 2.4 - 0.35, 0, 1));
+
+  sun.intensity = lerp(2.5, 4.4, pApproach);
+  rim.intensity = lerp(0.5, 2.2, pApproach);
+
+  // 3D canvas stays fully visible — the plane climbs off-screen instead of fading out
+  renderer.domElement.style.opacity = '1';
+
+  // Contrail: fades after the turn, then again as the jet exits the top (late p)
+  const turnEase = eIO(pTurn);
+  const turnTrailFade = 1 - eIn3(clamp((turnEase - 0.66) / 0.34, 0, 1));
+  const trailExitFade = 1 - eIn3(clamp((p - 0.84) / 0.16, 0, 1));
+  const trailStrength = pFly > 0.04 ? 0.62 * (1 - 0.4 * pApproach) : 0;
+  const trailOpacity = trailStrength * turnTrailFade * trailExitFade;
+  contrail.style.width = (lerp(0, 280, pFly) * (1 - pApproach * 0.85) * turnTrailFade * trailExitFade) + 'px';
+  contrail.style.opacity = String(trailOpacity);
+  contrail.style.visibility = trailOpacity < 0.04 ? 'hidden' : 'visible';
+}
+
+// Render loop
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.012;
+  if (airplane && modelLoaded && flightLocked && flightProgress < 0.02) {
+    airplane.position.y += Math.sin(t * 0.8) * 0.003;
+  }
+  renderer.render(scene3, camera);
+}
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  applySceneFromProgress();
+});
+
+// Initial sync at p=0 before any input (avoids first-input snap).
+window.addEventListener('load', () => { applySceneFromProgress(); });
+
+// Fake loader ticks while scripts load
+let fp = 0;
+const fi = setInterval(() => {
+  fp += 3;
+  if (fp >= 18) { clearInterval(fi); return; }
+  setProgress(fp, 'Taxiing');
+}, 100);
+</script>
 </body>
 </html>
